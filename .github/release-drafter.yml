@@ -1,0 +1,55 @@
+name-template: 'Version $NEXT_MAJOR_VERSION'
+tag-template: 'v$NEXT_MAJOR_VERSION'
+version-template: '$MAJOR'
+category-template: '### $TITLE'
+
+categories:
+  - title: 'Breaking changes'
+    labels:
+      - breaking
+  - title: 'Features and improvements'
+    labels:
+      - enhancement
+      - feature
+  - title: 'Bug fixes'
+    labels:
+      - bug
+      - fix
+      - bugfix
+      - regression
+  - title: 'Maintenance'
+    labels:
+      - chore
+      - cleanup
+      - dependencies
+      - ci
+      - build
+  - title: 'Documentation'
+    labels:
+      - documentation
+
+exclude-labels:
+  - no-changelog
+  - skip-changelog
+  - invalid
+
+autolabeler:
+  - label: ci
+    files:
+      - '.github/workflows/*'
+  - label: documentation
+    files:
+      - '*.md'
+  - label: bug
+    branch:
+      - '/fix\/.+/'
+    title:
+      - '/fix/i'
+  - label: feature
+    branch:
+      - '/feature\/.+/'
+
+template: |-
+  ## What's New
+
+  $CHANGES

@@ -11,10 +11,14 @@ on:
     types:
       - update-prep-command
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   call:
     uses: jellyfin/jellyfin-meta-plugins/.github/workflows/changelog.yaml@master
     with:
-      repository-name: jellyfin/jellyfin-plugin-template
+      repository-name: nana-kaka/OppaiDex
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
