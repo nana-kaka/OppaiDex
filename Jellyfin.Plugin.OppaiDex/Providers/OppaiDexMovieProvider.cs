@@ -18,13 +18,18 @@ public sealed class OppaiDexMovieProvider :
     IHasOrder
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IReadOnlyList<IPersonMetadataEnricher> _personEnrichers;
     private readonly MetadataSourceRegistry _sourceRegistry;
 
     public OppaiDexMovieProvider(
         MetadataSourceRegistry sourceRegistry,
+        IEnumerable<IPersonMetadataEnricher> personEnrichers,
         IHttpClientFactory httpClientFactory)
     {
         _sourceRegistry = sourceRegistry;
+        _personEnrichers = personEnrichers
+            .OrderBy(enricher => enricher.Order)
+            .ToArray();
         _httpClientFactory = httpClientFactory;
     }
 
@@ -90,7 +95,8 @@ public sealed class OppaiDexMovieProvider :
                 .ConfigureAwait(false);
             if (metadata is not null)
             {
-                return CreateResult(metadata);
+                return await CreateResultAsync(metadata, cancellationToken)
+                    .ConfigureAwait(false);
             }
         }
 
@@ -106,7 +112,9 @@ public sealed class OppaiDexMovieProvider :
             .GetAsync(url, cancellationToken);
     }
 
-    private static MetadataResult<Movie> CreateResult(MovieMetadata metadata)
+    private async Task<MetadataResult<Movie>> CreateResultAsync(
+        MovieMetadata metadata,
+        CancellationToken cancellationToken)
     {
         var item = new Movie
         {
@@ -134,13 +142,21 @@ public sealed class OppaiDexMovieProvider :
 
         foreach (var person in metadata.People)
         {
+            var enrichedPerson = person;
+            foreach (var enricher in _personEnrichers)
+            {
+                enrichedPerson = await enricher
+                    .EnrichAsync(enrichedPerson, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+
             result.AddPerson(new PersonInfo
             {
-                Name = person.Name,
-                Type = person.Kind,
-                ImageUrl = person.ImageUrl,
+                Name = enrichedPerson.Name,
+                Type = enrichedPerson.Kind,
+                ImageUrl = enrichedPerson.ImageUrl,
                 ProviderIds = new Dictionary<string, string>(
-                    person.ProviderIds,
+                    enrichedPerson.ProviderIds,
                     StringComparer.OrdinalIgnoreCase)
             });
         }

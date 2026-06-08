@@ -207,14 +207,12 @@ public sealed class R18MetadataSource : IMovieMetadataSource
             return movie.TitleEnglishUncensored;
         }
 
-        if (!movie.TitleEnglishIsMachineTranslation
-            && !string.IsNullOrWhiteSpace(movie.TitleEnglish))
+        if (!string.IsNullOrWhiteSpace(movie.TitleEnglish))
         {
             return movie.TitleEnglish;
         }
 
         return movie.TitleJapanese
-            ?? movie.TitleEnglish
             ?? movie.DvdId
             ?? movie.ContentId
             ?? "Unknown";

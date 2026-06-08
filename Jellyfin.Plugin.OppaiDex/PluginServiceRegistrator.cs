@@ -25,6 +25,18 @@ public sealed class PluginServiceRegistrator : IPluginServiceRegistrator
             serviceCollection.AddSingleton(typeof(IMovieMetadataSource), sourceType);
         }
 
+        var personEnricherTypes = typeof(PluginServiceRegistrator).Assembly
+            .GetTypes()
+            .Where(type => type is { IsClass: true, IsAbstract: false }
+                && typeof(IPersonMetadataEnricher).IsAssignableFrom(type));
+
+        foreach (var enricherType in personEnricherTypes)
+        {
+            serviceCollection.AddSingleton(
+                typeof(IPersonMetadataEnricher),
+                enricherType);
+        }
+
         serviceCollection.AddSingleton<PluginConfigurationAccessor>();
         serviceCollection.AddSingleton<WarashiClient>();
         serviceCollection.AddSingleton<MetadataSourceRegistry>();

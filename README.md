@@ -18,8 +18,10 @@ Imported data includes:
 - Catalogue tags and external IDs
 - Performer names and fallback portraits
 
-Human translations are preferred. Machine-translated titles and categories
-fall back to their Japanese originals when available.
+English titles are used as Jellyfin display titles, including machine
+translations when no uncensored English title is available. Japanese titles
+are retained as original titles. Machine-translated categories fall back to
+their Japanese originals when available.
 
 ### WAPdB
 
@@ -31,7 +33,8 @@ fall back to their Japanese originals when available.
 - Stable WAPdB person IDs
 
 Performer matching is restricted to exact normalized names and aliases to
-reduce false associations.
+reduce false associations. During movie imports, a matching WAPdB portrait
+and person ID take precedence over the lower-resolution R18.dev portrait.
 
 ## Usage
 
