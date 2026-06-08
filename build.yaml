@@ -5,6 +5,9 @@ version: "1.0.0.0"
 targetAbi: "10.11.0.0"
 framework: "net8.0"
 overview: "OppaiDex - definitly not a pron plugin for Jellyfin"
+description: >
+  Definitly not a pron plugin for Jellyfin
+  to get JAV Metadata
 category: "Metadata"
 owner: "Nana-kaka"
 artifacts:
