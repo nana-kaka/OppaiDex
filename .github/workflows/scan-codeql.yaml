@@ -13,6 +13,12 @@ on:
     - cron: '24 2 * * 4'
   workflow_dispatch:
 
+permissions:
+  actions: read
+  contents: read
+  packages: read
+  security-events: write
+
 jobs:
   call:
     uses: jellyfin/jellyfin-meta-plugins/.github/workflows/scan-codeql.yaml@master
