@@ -63,26 +63,27 @@ dotnet build Jellyfin.Plugin.OppaiDex.sln
 
 ## Releases
 
-Releases use Jellyfin's integer plugin build versions. The version in
-`build.yaml` must match the major component in `Directory.Build.props`:
+Releases use semantic versioning (`MAJOR.MINOR.PATCH`). Before publishing,
+keep `build.yaml` and `Directory.Build.props` on the same version:
 
 ```yaml
 # build.yaml
-version: 1
+version: "0.1.0"
 ```
 
 ```xml
 <!-- Directory.Build.props -->
-<Version>1.0.0.0</Version>
+<Version>0.1.0</Version>
+<AssemblyVersion>0.1.0.0</AssemblyVersion>
+<FileVersion>0.1.0.0</FileVersion>
 ```
 
 To publish a release:
 
-1. Merge the generated release preparation pull request, or update
-   `build.yaml` and `Directory.Build.props` manually.
-2. Create and publish a GitHub release using the matching tag, for example
-   `v1`.
-3. The publish workflow builds the plugin, attaches the ZIP and checksum
+1. Update `build.yaml` and `Directory.Build.props` to the intended version.
+2. Update the changelog in `build.yaml`.
+3. Publish the matching GitHub release draft, for example `v0.1.0`.
+4. The publish workflow builds the plugin, attaches the ZIP and checksum
    files to the release, and updates `manifest.json` on the `gh-pages`
    branch.
 
@@ -93,13 +94,19 @@ the following repository URL in Jellyfin:
 https://nana-kaka.github.io/OppaiDex/manifest.json
 ```
 
-For automatically generated release preparation pull requests, enable
-**Settings > Actions > General > Allow GitHub Actions to create and approve
-pull requests** once for the repository.
-
 A pushed tag alone does not publish the plugin. The corresponding GitHub
 release must be published so that the release workflow receives an upload
 URL.
+
+Version increments follow the usual semantic-versioning rules:
+
+- Patch releases such as `0.1.1` contain compatible fixes.
+- Minor releases such as `0.2.0` add compatible features.
+- Major releases such as `1.0.0` may contain breaking changes.
+
+The release drafter chooses the next version from pull-request labels.
+`breaking` increments the major version, `feature` or `enhancement` increments
+the minor version, and fixes or maintenance increment the patch version.
 
 ## Adding a metadata source
 

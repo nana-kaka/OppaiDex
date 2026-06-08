@@ -1,24 +1,20 @@
-name: '📝 Create/Update Release Draft & Release Bump PR'
+name: '📝 Update Release Draft'
 
 on:
   push:
     branches:
       - main
-    paths-ignore:
-      - build.yaml
   workflow_dispatch:
-  repository_dispatch:
-    types:
-      - update-prep-command
 
 permissions:
   contents: write
-  pull-requests: write
+  pull-requests: read
 
 jobs:
-  call:
-    uses: jellyfin/jellyfin-meta-plugins/.github/workflows/changelog.yaml@master
-    with:
-      repository-name: nana-kaka/OppaiDex
-    secrets:
-      token: ${{ secrets.GITHUB_TOKEN }}
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create or update release draft
+        uses: release-drafter/release-drafter@c2e2804cc59f45f57076a99af580d0fedb697927 # v7.3.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

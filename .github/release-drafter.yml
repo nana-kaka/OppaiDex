@@ -1,7 +1,29 @@
-name-template: 'Version $NEXT_MAJOR_VERSION'
-tag-template: 'v$NEXT_MAJOR_VERSION'
-version-template: '$MAJOR'
+name-template: 'Version $RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+version-template: '$MAJOR.$MINOR.$PATCH'
 category-template: '### $TITLE'
+
+version-resolver:
+  major:
+    labels:
+      - breaking
+  minor:
+    labels:
+      - enhancement
+      - feature
+  patch:
+    labels:
+      - bug
+      - fix
+      - bugfix
+      - regression
+      - chore
+      - cleanup
+      - dependencies
+      - ci
+      - build
+      - documentation
+  default: patch
 
 categories:
   - title: 'Breaking changes'
