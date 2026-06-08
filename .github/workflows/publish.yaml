@@ -49,12 +49,5 @@ jobs:
   manifest:
     needs:
       - upload
-    runs-on: ubuntu-latest
-    steps:
-      - name: Generate Jellyfin repository manifest
-        uses: Kevinjil/jellyfin-plugin-repo-action@v0.4.3
-        with:
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          pagesBranch: gh-pages
-          pagesFile: manifest.json
+    uses: ./.github/workflows/update-manifest.yaml
+    secrets: inherit

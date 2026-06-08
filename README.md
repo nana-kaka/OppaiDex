@@ -87,6 +87,10 @@ To publish a release:
    files to the release, and updates `manifest.json` on the `gh-pages`
    branch.
 
+The first manifest run creates the `gh-pages` branch automatically. The
+**Update Plugin Manifest** workflow can also be started manually to rebuild or
+repair the manifest without publishing another release.
+
 After the first release, enable GitHub Pages for the `gh-pages` branch. Add
 the following repository URL in Jellyfin:
 

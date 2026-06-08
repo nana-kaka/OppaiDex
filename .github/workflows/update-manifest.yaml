@@ -1,0 +1,49 @@
+name: '📦 Update Plugin Manifest'
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Initialize GitHub Pages branch
+        shell: bash
+        run: |
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            git fetch origin gh-pages
+            git switch --create gh-pages --track origin/gh-pages
+          else
+            git switch --orphan gh-pages
+          fi
+
+          if [[ ! -f manifest.json ]]; then
+            printf '[]\n' > manifest.json
+          fi
+
+          touch .nojekyll
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .nojekyll manifest.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Initialize Jellyfin plugin repository'
+            git push origin gh-pages
+          fi
+
+      - name: Generate Jellyfin repository manifest
+        uses: Kevinjil/jellyfin-plugin-repo-action@v0.4.3
+        with:
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          pagesBranch: gh-pages
+          pagesFile: manifest.json
