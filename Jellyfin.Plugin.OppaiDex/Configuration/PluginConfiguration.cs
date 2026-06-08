@@ -1,3 +1,6 @@
+using System;
+using System.ComponentModel;
+using System.Text.Json.Serialization;
 using MediaBrowser.Model.Plugins;
 
 namespace Jellyfin.Plugin.OppaiDex.Configuration;
@@ -12,11 +15,30 @@ public class PluginConfiguration : BasePluginConfiguration
     /// </summary>
     public PluginConfiguration()
     {
-        ApiUrlTemplate = "https://r18.dev/videos/vod/movies/detail/-/combined={id}/json";
+        R18ApiUrlTemplate = Constants.DefaultR18ApiUrlTemplate;
     }
 
     /// <summary>
-    /// Gets or sets the API URL template. The movie identifier replaces the {id} placeholder.
+    /// Gets or sets the R18.dev API URL template.
+    /// The movie identifier replaces the {id} placeholder.
     /// </summary>
-    public string ApiUrlTemplate { get; set; }
+    public string R18ApiUrlTemplate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the legacy R18.dev API URL template.
+    /// </summary>
+    [Obsolete("Use R18ApiUrlTemplate instead.")]
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [JsonIgnore]
+    public string ApiUrlTemplate
+    {
+        get => R18ApiUrlTemplate;
+        set
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                R18ApiUrlTemplate = value;
+            }
+        }
+    }
 }

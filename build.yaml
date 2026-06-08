@@ -4,13 +4,13 @@ guid: "fda53ad2-6d13-42e4-a501-a6d4514e74fc"
 version: "0.0.0.1"
 targetAbi: "10.11.0.0"
 framework: "net9.0"
-overview: "OppaiDex - definitly not a porn plugin for Jellyfin"
+overview: "JAV metadata provider powered by R18.dev"
 description: >
-  Definitly not a porn plugin for Jellyfin
-  to get JAV Metadata
+  Retrieves movie metadata, cast information, person images,
+  and cover artwork from R18.dev.
 category: "Metadata"
 owner: "Nana-kaka"
 artifacts:
 - "Jellyfin.Plugin.OppaiDex.dll"
 changelog: >
-  changelog
+  Initial R18.dev metadata provider.

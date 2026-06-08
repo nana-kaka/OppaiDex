@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <title>OppaiDex</title>
 </head>
 <body>
-    <div id="OppaiDexConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-select,emby-checkbox">
+    <div id="OppaiDexConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button">
         <div data-role="content">
             <div class="content-primary">
                 <form id="OppaiDexConfigForm">
                     <div class="inputContainer">
-                        <label class="inputLabel inputLabelUnfocused" for="ApiUrlTemplate">API-URL-Vorlage</label>
-                        <input id="ApiUrlTemplate" name="ApiUrlTemplate" type="text" is="emby-input" />
+                        <label class="inputLabel inputLabelUnfocused" for="R18ApiUrlTemplate">R18.dev API URL template</label>
+                        <input id="R18ApiUrlTemplate" name="R18ApiUrlTemplate" type="text" is="emby-input" required />
                         <div class="fieldDescription">
-                            Die Kennung der Mediendatei ersetzt den Platzhalter {id}.
+                            The media file identifier replaces the {id} placeholder.
                         </div>
                     </div>
                     <div>
@@ -25,7 +25,7 @@
             </div>
         </div>
         <script type="text/javascript">
-            var OppaiDexConfig = {
+            const OppaiDexConfig = {
                 pluginUniqueId: 'fda53ad2-6d13-42e4-a501-a6d4514e74fc'
             };
 
@@ -33,24 +33,24 @@
                 .addEventListener('pageshow', function() {
                     Dashboard.showLoadingMsg();
                     ApiClient.getPluginConfiguration(OppaiDexConfig.pluginUniqueId).then(function (config) {
-                        document.querySelector('#ApiUrlTemplate').value = config.ApiUrlTemplate;
+                        document.querySelector('#R18ApiUrlTemplate').value = config.R18ApiUrlTemplate;
                         Dashboard.hideLoadingMsg();
                     });
                 });
 
             document.querySelector('#OppaiDexConfigForm')
                 .addEventListener('submit', function(e) {
-                Dashboard.showLoadingMsg();
-                ApiClient.getPluginConfiguration(OppaiDexConfig.pluginUniqueId).then(function (config) {
-                    config.ApiUrlTemplate = document.querySelector('#ApiUrlTemplate').value;
-                    ApiClient.updatePluginConfiguration(OppaiDexConfig.pluginUniqueId, config).then(function (result) {
-                        Dashboard.processPluginConfigurationUpdateResult(result);
+                    Dashboard.showLoadingMsg();
+                    ApiClient.getPluginConfiguration(OppaiDexConfig.pluginUniqueId).then(function (config) {
+                        config.R18ApiUrlTemplate = document.querySelector('#R18ApiUrlTemplate').value;
+                        ApiClient.updatePluginConfiguration(OppaiDexConfig.pluginUniqueId, config).then(function (result) {
+                            Dashboard.processPluginConfigurationUpdateResult(result);
+                        });
                     });
-                });
 
-                e.preventDefault();
-                return false;
-            });
+                    e.preventDefault();
+                    return false;
+                });
         </script>
     </div>
 </body>

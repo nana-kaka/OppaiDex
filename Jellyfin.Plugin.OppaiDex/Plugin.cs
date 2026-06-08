@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using Jellyfin.Plugin.OppaiDex.Configuration;
 using MediaBrowser.Common.Configuration;
-using MediaBrowser.Common.Net;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Model.Plugins;
 using MediaBrowser.Model.Serialization;
@@ -14,21 +11,10 @@ namespace Jellyfin.Plugin.OppaiDex;
 
 public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
 {
-    private readonly IHttpClientFactory _httpClientFactory;
-
-    public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer, IHttpClientFactory httpClientFactory)
+    public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer)
         : base(applicationPaths, xmlSerializer)
     {
         Instance = this;
-        _httpClientFactory = httpClientFactory;
-    }
-
-    public HttpClient GetHttpClient()
-    {
-        var httpClient = _httpClientFactory.CreateClient(NamedClient.Default);
-        httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(Name, Version.ToString()));
-
-        return httpClient;
     }
 
     /// <inheritdoc />

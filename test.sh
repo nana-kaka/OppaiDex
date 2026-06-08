@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-
-dotnet build
+dotnet build Jellyfin.Plugin.OppaiDex.sln

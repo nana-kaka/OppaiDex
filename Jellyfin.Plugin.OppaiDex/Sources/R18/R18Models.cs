@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Jellyfin.Plugin.OppaiDex.Models;
+namespace Jellyfin.Plugin.OppaiDex.Sources.R18;
 
 public sealed class R18Movie
 {
@@ -29,6 +29,9 @@ public sealed class R18Movie
 
     [JsonPropertyName("dvd_id")]
     public string? DvdId { get; init; }
+
+    [JsonPropertyName("gallery")]
+    public IReadOnlyList<R18GalleryImage> Gallery { get; init; } = [];
 
     [JsonPropertyName("histrions")]
     public IReadOnlyList<R18Person> Histrions { get; init; } = [];
@@ -60,12 +63,24 @@ public sealed class R18Movie
     [JsonPropertyName("title_en")]
     public string? TitleEnglish { get; init; }
 
+    [JsonPropertyName("title_en_is_machine_translation")]
+    public bool TitleEnglishIsMachineTranslation { get; init; }
+
     [JsonPropertyName("title_en_uncensored")]
     public string? TitleEnglishUncensored { get; init; }
+
+    [JsonPropertyName("title_ja")]
+    public string? TitleJapanese { get; init; }
 }
 
 public sealed class R18Person
 {
+    [JsonPropertyName("id")]
+    public long Id { get; init; }
+
+    [JsonPropertyName("image_url")]
+    public string? ImageUrl { get; init; }
+
     [JsonPropertyName("name_kanji")]
     public string? NameKanji { get; init; }
 
@@ -76,14 +91,28 @@ public sealed class R18Person
     public string? DisplayName => NameRomaji ?? NameKanji;
 }
 
+public sealed class R18GalleryImage
+{
+    [JsonPropertyName("image_full")]
+    public string? FullUrl { get; init; }
+
+    [JsonPropertyName("image_thumb")]
+    public string? ThumbnailUrl { get; init; }
+}
+
 public sealed class R18Category
 {
     [JsonPropertyName("name_en")]
     public string? NameEnglish { get; init; }
 
+    [JsonPropertyName("name_en_is_machine_translation")]
+    public bool NameEnglishIsMachineTranslation { get; init; }
+
     [JsonPropertyName("name_ja")]
     public string? NameJapanese { get; init; }
 
     [JsonIgnore]
-    public string? DisplayName => NameEnglish ?? NameJapanese;
+    public string? DisplayName => !NameEnglishIsMachineTranslation
+        ? NameEnglish ?? NameJapanese
+        : NameJapanese ?? NameEnglish;
 }

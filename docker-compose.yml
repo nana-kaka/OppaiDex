@@ -1,8 +1,6 @@
-version: "3"
-
 services:
   jellyfin:
-    image: jellyfin/jellyfin:latest
+    image: docker.io/jellyfin/jellyfin:10.11
     volumes:
       - ./test/config:/config:z
       - ./test/videos:/media/videos:ro
