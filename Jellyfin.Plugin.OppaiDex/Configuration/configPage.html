@@ -5,7 +5,7 @@
     <title>OppaiDex</title>
 </head>
 <body>
-    <div id="OppaiDexConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button">
+    <div id="OppaiDexConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-checkbox">
         <div data-role="content">
             <div class="content-primary">
                 <form id="OppaiDexConfigForm">
@@ -15,6 +15,19 @@
                         <div class="fieldDescription">
                             The media file identifier replaces the {id} placeholder.
                         </div>
+                    </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="WarashiEnabled" name="WarashiEnabled" type="checkbox" is="emby-checkbox" />
+                            <span>Enable WAPdB person metadata</span>
+                        </label>
+                        <div class="fieldDescription">
+                            Adds higher-resolution portraits, birth dates, and birthplaces for performers.
+                        </div>
+                    </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="WarashiBaseUrl">WAPdB base URL</label>
+                        <input id="WarashiBaseUrl" name="WarashiBaseUrl" type="text" is="emby-input" required />
                     </div>
                     <div>
                         <button is="emby-button" type="submit" class="raised button-submit block emby-button">
@@ -34,6 +47,8 @@
                     Dashboard.showLoadingMsg();
                     ApiClient.getPluginConfiguration(OppaiDexConfig.pluginUniqueId).then(function (config) {
                         document.querySelector('#R18ApiUrlTemplate').value = config.R18ApiUrlTemplate;
+                        document.querySelector('#WarashiEnabled').checked = config.WarashiEnabled;
+                        document.querySelector('#WarashiBaseUrl').value = config.WarashiBaseUrl;
                         Dashboard.hideLoadingMsg();
                     });
                 });
@@ -43,6 +58,8 @@
                     Dashboard.showLoadingMsg();
                     ApiClient.getPluginConfiguration(OppaiDexConfig.pluginUniqueId).then(function (config) {
                         config.R18ApiUrlTemplate = document.querySelector('#R18ApiUrlTemplate').value;
+                        config.WarashiEnabled = document.querySelector('#WarashiEnabled').checked;
+                        config.WarashiBaseUrl = document.querySelector('#WarashiBaseUrl').value;
                         ApiClient.updatePluginConfiguration(OppaiDexConfig.pluginUniqueId, config).then(function (result) {
                             Dashboard.processPluginConfigurationUpdateResult(result);
                         });

@@ -1,6 +1,6 @@
 namespace Jellyfin.Plugin.OppaiDex.Configuration;
 
-public sealed class PluginConfigurationAccessor
+public class PluginConfigurationAccessor
 {
-    public PluginConfiguration Current => Plugin.Instance.Configuration;
+    public virtual PluginConfiguration Current => Plugin.Instance.Configuration;
 }

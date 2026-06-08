@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Jellyfin.Plugin.OppaiDex.Configuration;
 using Jellyfin.Plugin.OppaiDex.Metadata;
+using Jellyfin.Plugin.OppaiDex.Sources.Warashi;
 using MediaBrowser.Controller;
 using MediaBrowser.Controller.Plugins;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +26,7 @@ public sealed class PluginServiceRegistrator : IPluginServiceRegistrator
         }
 
         serviceCollection.AddSingleton<PluginConfigurationAccessor>();
+        serviceCollection.AddSingleton<WarashiClient>();
         serviceCollection.AddSingleton<MetadataSourceRegistry>();
     }
 }

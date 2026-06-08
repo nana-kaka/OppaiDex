@@ -12,5 +12,6 @@ category: "Metadata"
 owner: "Nana-kaka"
 artifacts:
 - "Jellyfin.Plugin.OppaiDex.dll"
+- "AngleSharp.dll"
 changelog: >
-  Initial R18.dev metadata provider.
+  Added modular R18.dev movie metadata and WAPdB performer enrichment.

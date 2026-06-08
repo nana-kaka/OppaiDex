@@ -4,9 +4,11 @@
     <TargetFramework>net9.0</TargetFramework>
     <RootNamespace>Jellyfin.Plugin.OppaiDex</RootNamespace>
     <Nullable>enable</Nullable>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="1.4.0" />
     <PackageReference Include="Jellyfin.Controller" Version="10.11.0">
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>

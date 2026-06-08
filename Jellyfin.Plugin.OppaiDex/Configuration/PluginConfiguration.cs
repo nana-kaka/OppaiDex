@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 using MediaBrowser.Model.Plugins;
 
 namespace Jellyfin.Plugin.OppaiDex.Configuration;
@@ -16,6 +17,8 @@ public class PluginConfiguration : BasePluginConfiguration
     public PluginConfiguration()
     {
         R18ApiUrlTemplate = Constants.DefaultR18ApiUrlTemplate;
+        WarashiBaseUrl = Constants.DefaultWarashiBaseUrl;
+        WarashiEnabled = true;
     }
 
     /// <summary>
@@ -25,11 +28,22 @@ public class PluginConfiguration : BasePluginConfiguration
     public string R18ApiUrlTemplate { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether WAPdB person metadata is enabled.
+    /// </summary>
+    public bool WarashiEnabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets the WAPdB base URL.
+    /// </summary>
+    public string WarashiBaseUrl { get; set; }
+
+    /// <summary>
     /// Gets or sets the legacy R18.dev API URL template.
     /// </summary>
     [Obsolete("Use R18ApiUrlTemplate instead.")]
     [EditorBrowsable(EditorBrowsableState.Never)]
     [JsonIgnore]
+    [XmlIgnore]
     public string ApiUrlTemplate
     {
         get => R18ApiUrlTemplate;
