@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "category": "Metadata",
+    "description": "Retrieves movie metadata, cast information, person images, and cover artwork from R18.dev and WAPdB.\n",
+    "guid": "fda53ad2-6d13-42e4-a501-a6d4514e74fc",
+    "name": "OppaiDex",
+    "overview": "JAV metadata provider powered by R18.dev and WAPdB",
+    "owner": "Nana-kaka",
+    "versions": [
+      {
+        "changelog": "## What's New\r\n\r\n* Initial first release\r\n\r\n",
+        "checksum": "185eecd5a44b60bb5b6a36bc99f5744e",
+        "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.1.0/oppaidex_0.1.0.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-06-08T22:21:03Z",
+        "version": "0.1.0"
+      }
+    ]
+  }
+]
