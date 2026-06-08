@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    volumes:
+      - ./test/config:/config:z
+      - ./test/videos:/media/videos:ro
+      - ./Jellyfin.Plugin.OppaiDex/bin/Debug/net9.0/Jellyfin.Plugin.OppaiDex.dll:/config/plugins/OppaiDex/Jellyfin.Plugin.OppaiDex.dll:ro
+    ports:
+      - 127.0.0.1:9096:8096

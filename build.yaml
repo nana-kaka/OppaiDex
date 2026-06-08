@@ -1,12 +1,12 @@
 ---
 name: "OppaiDex"
 guid: "fda53ad2-6d13-42e4-a501-a6d4514e74fc"
-version: "1.0.0.0"
+version: "0.0.0.1"
 targetAbi: "10.11.0.0"
-framework: "net8.0"
-overview: "OppaiDex - definitly not a pron plugin for Jellyfin"
+framework: "net9.0"
+overview: "OppaiDex - definitly not a porn plugin for Jellyfin"
 description: >
-  Definitly not a pron plugin for Jellyfin
+  Definitly not a porn plugin for Jellyfin
   to get JAV Metadata
 category: "Metadata"
 owner: "Nana-kaka"

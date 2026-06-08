@@ -1,40 +1,43 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using Jellyfin.Plugin.OppaiDex.Configuration;
 using MediaBrowser.Common.Configuration;
+using MediaBrowser.Common.Net;
 using MediaBrowser.Common.Plugins;
 using MediaBrowser.Model.Plugins;
 using MediaBrowser.Model.Serialization;
 
 namespace Jellyfin.Plugin.OppaiDex;
 
-/// <summary>
-/// The main plugin.
-/// </summary>
 public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Plugin"/> class.
-    /// </summary>
-    /// <param name="applicationPaths">Instance of the <see cref="IApplicationPaths"/> interface.</param>
-    /// <param name="xmlSerializer">Instance of the <see cref="IXmlSerializer"/> interface.</param>
-    public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer)
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    public Plugin(IApplicationPaths applicationPaths, IXmlSerializer xmlSerializer, IHttpClientFactory httpClientFactory)
         : base(applicationPaths, xmlSerializer)
     {
         Instance = this;
+        _httpClientFactory = httpClientFactory;
+    }
+
+    public HttpClient GetHttpClient()
+    {
+        var httpClient = _httpClientFactory.CreateClient(NamedClient.Default);
+        httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(Name, Version.ToString()));
+
+        return httpClient;
     }
 
     /// <inheritdoc />
-    public override string Name => "OppaiDex";
+    public override string Name => Constants.PluginName;
 
     /// <inheritdoc />
-    public override Guid Id => Guid.Parse("eb5d7894-8eef-4b36-aa6f-5d124e828ce1");
+    public override Guid Id => Guid.Parse(Constants.PluginGuid);
 
-    /// <summary>
-    /// Gets the current plugin instance.
-    /// </summary>
-    public static Plugin? Instance { get; private set; }
+    public static Plugin Instance { get; private set; } = null!;
 
     /// <inheritdoc />
     public IEnumerable<PluginPageInfo> GetPages()
