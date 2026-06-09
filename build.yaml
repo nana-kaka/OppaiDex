@@ -2,7 +2,7 @@
 name: "OppaiDex"
 guid: "fda53ad2-6d13-42e4-a501-a6d4514e74fc"
 imageUrl: "https://raw.githubusercontent.com/nana-kaka/OppaiDex/main/artwork/oppaidex.png"
-version: "0.3.2"
+version: "0.4.0"
 targetAbi: "10.11.0.0"
 framework: "net9.0"
 overview: "JAV metadata provider powered by R18.dev, JavDatabase, and WAPdB"
@@ -15,6 +15,8 @@ artifacts:
 - "Jellyfin.Plugin.OppaiDex.dll"
 - "AngleSharp.dll"
 changelog: >
-  Fixed WAPdB profile resolution and portrait selection. Full WAPdB profile
-  images now take precedence over R18.dev portraits, while lower-resolution
-  WAPdB mini-profile images remain excluded.
+  Added combined movie image results from R18.dev and JavDatabase, including
+  posters and backdrops from both sources. Duplicate images are filtered, and
+  failures from one source no longer prevent images from other sources from
+  being displayed. Added release metadata validation to prevent publishing
+  packages whose internal version does not match the GitHub release tag.
