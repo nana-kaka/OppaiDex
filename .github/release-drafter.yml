@@ -67,9 +67,13 @@ autolabeler:
       - '/fix\/.+/'
     title:
       - '/fix/i'
-  - label: feature
+  - label: enhancement
     branch:
       - '/feature\/.+/'
+      - '/enhancement\/.+/'
+      - '/improve\/.+/'
+    title:
+      - '/^(add|implement|introduce|enhance|improve)\b/i'
 
 template: |-
   ## What's New
