@@ -8,6 +8,14 @@
     "owner": "Nana-kaka",
     "versions": [
       {
+        "changelog": "## What's New\r\n\r\n* fix broken v0.1.1 by prepare v0.1.2 (#3) @nana-kaka",
+        "checksum": "6df3431d480da2fbe14d23efbf2581e0",
+        "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.1.2/oppaidex_0.1.2.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-06-09T09:02:53Z",
+        "version": "0.1.2"
+      },
+      {
         "changelog": "## What's New\r\n\r\n* handle r18.dev http/429 messages (#2) @nana-kaka",
         "checksum": "4dc1dd7c66cd53a8bcda0840167d72ff",
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.1.1/oppaidex_0.1.0.0.zip",
