@@ -9,6 +9,14 @@
     "owner": "Nana-kaka",
     "versions": [
       {
+        "changelog": "## What's New\r\n\r\n### Bug fixes\r\n\r\n* Fix WAPdB portrait selection (#8) @nana-kaka",
+        "checksum": "198645edfca0beaabcb4f14cde7cedc2",
+        "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.3.1/oppaidex_0.2.0.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-06-09T15:56:34Z",
+        "version": "0.2.0"
+      },
+      {
         "changelog": "## What's New\r\n\r\n* add logo (#7) @nana-kaka\r\n\r\n### Features and improvements\r\n\r\n* extent logging if 404 (#6) @nana-kaka",
         "checksum": "b0779a8c9bc9ef5cd2a1875386aadb60",
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.3.0/oppaidex_0.2.0.0.zip",
