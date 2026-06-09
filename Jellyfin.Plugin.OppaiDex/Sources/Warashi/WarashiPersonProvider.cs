@@ -49,19 +49,13 @@ public sealed class WarashiPersonProvider :
         PersonLookupInfo info,
         CancellationToken cancellationToken)
     {
-        WarashiPerson? person;
-        if (info.ProviderIds.TryGetValue(WarashiProvider.Key, out var id))
-        {
-            person = await _warashiClient
+        var person = info.ProviderIds.TryGetValue(WarashiProvider.Key, out var id)
+            ? await _warashiClient
                 .GetPersonAsync(id, cancellationToken)
-                .ConfigureAwait(false);
-        }
-        else
-        {
-            person = await _warashiClient
+                .ConfigureAwait(false)
+            : await _warashiClient
                 .FindExactAsync(info.Name, cancellationToken)
                 .ConfigureAwait(false);
-        }
 
         if (person is null)
         {
