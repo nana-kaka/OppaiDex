@@ -3,6 +3,7 @@
     "category": "Metadata",
     "description": "Retrieves movie metadata, cast information, person images, and cover artwork from R18.dev, JavDatabase, and WAPdB.\n",
     "guid": "fda53ad2-6d13-42e4-a501-a6d4514e74fc",
+    "imageUrl": "https://raw.githubusercontent.com/nana-kaka/OppaiDex/main/artwork/oppaidex.png",
     "name": "OppaiDex",
     "overview": "JAV metadata provider powered by R18.dev, JavDatabase, and WAPdB",
     "owner": "Nana-kaka",
