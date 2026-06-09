@@ -108,7 +108,7 @@ To publish a release:
    branch.
 
 The publish workflow validates the release tag before building. A tag such as
-`v0.4.0` is rejected unless `build.yaml` contains `0.4.0` and
+`v0.4.1` is rejected unless `build.yaml` contains `0.4.1` and
 `Directory.Build.props` contains the matching project, assembly, and file
 versions. A failed validation leaves the GitHub release without plugin
 artifacts or a manifest update.
