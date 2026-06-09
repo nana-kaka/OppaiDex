@@ -11,20 +11,24 @@ using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Providers;
+using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.OppaiDex.Providers;
 
 public sealed class OppaiDexImageProvider : IRemoteImageProvider
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<OppaiDexImageProvider> _logger;
     private readonly MetadataSourceRegistry _sourceRegistry;
 
     public OppaiDexImageProvider(
         MetadataSourceRegistry sourceRegistry,
-        IHttpClientFactory httpClientFactory)
+        IHttpClientFactory httpClientFactory,
+        ILogger<OppaiDexImageProvider> logger)
     {
         _sourceRegistry = sourceRegistry;
         _httpClientFactory = httpClientFactory;
+        _logger = logger;
     }
 
     public string Name => Constants.PluginName;
@@ -43,7 +47,11 @@ public sealed class OppaiDexImageProvider : IRemoteImageProvider
         BaseItem item,
         CancellationToken cancellationToken)
     {
-        foreach (var source in _sourceRegistry.GetCandidates(item.ProviderIds))
+        var images = new List<RemoteImageInfo>();
+        var imageUrls = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var source in _sourceRegistry
+                     .GetImageCandidates(item.ProviderIds))
         {
             var id = source.GetLookupId(item.ProviderIds, item.Path, item.Name);
             if (string.IsNullOrWhiteSpace(id))
@@ -51,16 +59,39 @@ public sealed class OppaiDexImageProvider : IRemoteImageProvider
                 continue;
             }
 
-            var metadata = await source
-                .GetMetadataAsync(id, cancellationToken)
-                .ConfigureAwait(false);
-            if (metadata is not null)
+            try
             {
-                return CreateImages(source.DisplayName, metadata);
+                var metadata = await source
+                    .GetMetadataAsync(id, cancellationToken)
+                    .ConfigureAwait(false);
+                if (metadata is null)
+                {
+                    continue;
+                }
+
+                foreach (var image in CreateImages(source.DisplayName, metadata))
+                {
+                    if (imageUrls.Add(image.Url))
+                    {
+                        images.Add(image);
+                    }
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception exception)
+            {
+                _logger.LogWarning(
+                    exception,
+                    "Could not retrieve remote images from {SourceName} for {MovieId}.",
+                    source.DisplayName,
+                    id);
             }
         }
 
-        return [];
+        return images;
     }
 
     public Task<HttpResponseMessage> GetImageResponse(

@@ -35,4 +35,11 @@ public sealed class MetadataSourceRegistry
 
         return explicitlySelected.Length > 0 ? explicitlySelected : _sources;
     }
+
+    public IEnumerable<IMovieMetadataSource> GetImageCandidates(
+        IReadOnlyDictionary<string, string> providerIds)
+    {
+        return _sources
+            .OrderByDescending(source => providerIds.ContainsKey(source.Key));
+    }
 }
