@@ -9,7 +9,64 @@ permissions:
   contents: write
 
 jobs:
+  validate-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Validate release metadata
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+
+          if [[ ! "$RELEASE_TAG" =~ ^v([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            echo "::error::Release tag '$RELEASE_TAG' must use the format vMAJOR.MINOR.PATCH."
+            exit 1
+          fi
+
+          release_version="${BASH_REMATCH[1]}"
+          yaml_version="$(sed -nE 's/^version:[[:space:]]*"([^"]+)".*/\1/p' build.yaml)"
+          project_version="$(sed -nE 's/.*<Version>([^<]+)<\/Version>.*/\1/p' Directory.Build.props)"
+          assembly_version="$(sed -nE 's/.*<AssemblyVersion>([^<]+)<\/AssemblyVersion>.*/\1/p' Directory.Build.props)"
+          file_version="$(sed -nE 's/.*<FileVersion>([^<]+)<\/FileVersion>.*/\1/p' Directory.Build.props)"
+          expected_binary_version="${release_version}.0"
+
+          failed=false
+
+          if [[ "$yaml_version" != "$release_version" ]]; then
+            echo "::error file=build.yaml::Version '$yaml_version' does not match release tag '$RELEASE_TAG'."
+            failed=true
+          fi
+
+          if [[ "$project_version" != "$release_version" ]]; then
+            echo "::error file=Directory.Build.props::Version '$project_version' does not match release tag '$RELEASE_TAG'."
+            failed=true
+          fi
+
+          if [[ "$assembly_version" != "$expected_binary_version" ]]; then
+            echo "::error file=Directory.Build.props::AssemblyVersion '$assembly_version' must be '$expected_binary_version'."
+            failed=true
+          fi
+
+          if [[ "$file_version" != "$expected_binary_version" ]]; then
+            echo "::error file=Directory.Build.props::FileVersion '$file_version' must be '$expected_binary_version'."
+            failed=true
+          fi
+
+          if [[ "$failed" == true ]]; then
+            exit 1
+          fi
+
+          echo "Release metadata matches $RELEASE_TAG."
+
   build:
+    needs:
+      - validate-release
     uses: jellyfin/jellyfin-meta-plugins/.github/workflows/build.yaml@master
     with:
       dotnet-version: '9.0.x'
