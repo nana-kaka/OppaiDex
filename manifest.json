@@ -9,6 +9,14 @@
     "owner": "Nana-kaka",
     "versions": [
       {
+        "changelog": "## What's New\r\n\r\n* add logo (#7) @nana-kaka\r\n\r\n### Features and improvements\r\n\r\n* extent logging if 404 (#6) @nana-kaka",
+        "checksum": "b0779a8c9bc9ef5cd2a1875386aadb60",
+        "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.3.0/oppaidex_0.2.0.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-06-09T13:59:32Z",
+        "version": "0.2.0"
+      },
+      {
         "changelog": "## What's New\r\n\r\n### Features and improvements\r\n\r\n* improve ci labeling (#5) @nana-kaka\r\n* add a fallback to JavDatabase when r18.dev fails with 404 (#4) @nana-kaka",
         "checksum": "cd1aee094cdc24945e2826ed51c17ddf",
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.2.0/oppaidex_0.2.0.0.zip",
