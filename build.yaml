@@ -1,18 +1,19 @@
 ---
 name: "OppaiDex"
 guid: "fda53ad2-6d13-42e4-a501-a6d4514e74fc"
-version: "0.1.2"
+version: "0.2.0"
 targetAbi: "10.11.0.0"
 framework: "net9.0"
-overview: "JAV metadata provider powered by R18.dev and WAPdB"
+overview: "JAV metadata provider powered by R18.dev, JavDatabase, and WAPdB"
 description: >
   Retrieves movie metadata, cast information, person images,
-  and cover artwork from R18.dev and WAPdB.
+  and cover artwork from R18.dev, JavDatabase, and WAPdB.
 category: "Metadata"
 owner: "Nana-kaka"
 artifacts:
 - "Jellyfin.Plugin.OppaiDex.dll"
 - "AngleSharp.dll"
 changelog: >
-  Added R18.dev request throttling, response caching, and HTTP 429 retry
-  handling. Added a configurable delay between R18.dev requests.
+  Added JavDatabase as an exact catalogue-ID fallback when R18.dev has no
+  result. Added configurable JavDatabase access, caching, request throttling,
+  covers, gallery images, and external IDs.

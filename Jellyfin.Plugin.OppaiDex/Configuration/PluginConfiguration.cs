@@ -19,6 +19,10 @@ public class PluginConfiguration : BasePluginConfiguration
         R18ApiUrlTemplate = Constants.DefaultR18ApiUrlTemplate;
         R18RequestDelayMilliseconds =
             Constants.DefaultR18RequestDelayMilliseconds;
+        JavDatabaseBaseUrl = Constants.DefaultJavDatabaseBaseUrl;
+        JavDatabaseEnabled = true;
+        JavDatabaseRequestDelayMilliseconds =
+            Constants.DefaultJavDatabaseRequestDelayMilliseconds;
         WarashiBaseUrl = Constants.DefaultWarashiBaseUrl;
         WarashiEnabled = true;
     }
@@ -33,6 +37,21 @@ public class PluginConfiguration : BasePluginConfiguration
     /// Gets or sets the minimum delay between R18.dev requests.
     /// </summary>
     public int R18RequestDelayMilliseconds { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether JavDatabase fallback metadata is enabled.
+    /// </summary>
+    public bool JavDatabaseEnabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets the JavDatabase base URL.
+    /// </summary>
+    public string JavDatabaseBaseUrl { get; set; }
+
+    /// <summary>
+    /// Gets or sets the minimum delay between JavDatabase requests.
+    /// </summary>
+    public int JavDatabaseRequestDelayMilliseconds { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether WAPdB person metadata is enabled.

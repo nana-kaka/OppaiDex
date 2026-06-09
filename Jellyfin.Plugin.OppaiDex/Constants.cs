@@ -7,6 +7,9 @@ public static class Constants
     public const string DefaultR18ApiUrlTemplate =
         "https://r18.dev/videos/vod/movies/detail/-/combined={id}/json";
     public const int DefaultR18RequestDelayMilliseconds = 1000;
+    public const string DefaultJavDatabaseBaseUrl =
+        "https://www.javdatabase.com";
+    public const int DefaultJavDatabaseRequestDelayMilliseconds = 1500;
     public const string DefaultWarashiBaseUrl =
         "https://warashi-asian-pornstars.fr";
 }

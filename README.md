@@ -36,6 +36,19 @@ Performer matching is restricted to exact normalized names and aliases to
 reduce false associations. During movie imports, a matching WAPdB portrait
 and person ID take precedence over the lower-resolution R18.dev portrait.
 
+### JavDatabase
+
+[JavDatabase](https://www.javdatabase.com/) is an optional movie metadata
+fallback. It is queried only when R18.dev has no result for the catalogue ID.
+Matches require an exact normalized DVD ID.
+
+Fallback metadata can include:
+
+- English titles, release dates, and runtimes
+- Studios, genres, directors, and performers
+- Full covers and gallery backdrops
+- JavDatabase external IDs
+
 ## Usage
 
 ### File names
@@ -55,6 +68,8 @@ OppaiDex extracts catalogue IDs from movie file names. Examples:
 - R18.dev requests are serialized, cached for 30 minutes, and delayed by one
   second by default. Increase the configurable delay if the service still
   responds with HTTP 429.
+- JavDatabase fallback metadata and its request delay can be configured
+  independently.
 - WAPdB performer enrichment can be enabled or disabled independently.
 - Source base URLs are configurable to accommodate future endpoint changes.
 
@@ -138,6 +153,11 @@ No changes to `OppaiDexMovieProvider`, `OppaiDexImageProvider`, or
 The WAPdB integration was informed by the open-source
 [Kyuhaku/JellyfinJAV](https://github.com/Kyuhaku/JellyfinJAV) plugin and its
 Warashi person-provider implementation.
+
+The JavDatabase fallback strategy was informed by
+[alxpnt2/PlexJav18.bundle](https://github.com/alxpnt2/PlexJav18.bundle).
+OppaiDex uses an independent implementation based on the current JavDatabase
+HTML structure and does not copy the Plex agent code.
 
 JellyfinJAV did not work reliably with the Jellyfin version targeted by this
 project. OppaiDex therefore implements the integration independently using the
