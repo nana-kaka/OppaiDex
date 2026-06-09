@@ -129,6 +129,8 @@ Version increments follow the usual semantic-versioning rules:
 The release drafter chooses the next version from pull-request labels.
 `breaking` increments the major version, `feature` or `enhancement` increments
 the minor version, and fixes or maintenance increment the patch version.
+Pull requests without a recognized label default to a patch release. Verify
+the generated draft version before publishing it.
 
 ## Adding a metadata source
 
