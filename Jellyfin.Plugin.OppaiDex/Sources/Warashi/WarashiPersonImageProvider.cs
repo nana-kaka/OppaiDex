@@ -40,15 +40,21 @@ public sealed class WarashiPersonImageProvider : IRemoteImageProvider
         BaseItem item,
         CancellationToken cancellationToken)
     {
-        if (!item.ProviderIds.TryGetValue(WarashiProvider.Key, out var id))
+        WarashiPerson? person;
+        if (item.ProviderIds.TryGetValue(WarashiProvider.Key, out var id))
         {
-            return [];
+            person = await _warashiClient
+                .GetPersonAsync(id, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        else
+        {
+            person = await _warashiClient
+                .FindExactAsync(item.Name, cancellationToken)
+                .ConfigureAwait(false);
         }
 
-        var person = await _warashiClient
-            .GetPersonAsync(id, cancellationToken)
-            .ConfigureAwait(false);
-        if (person is null)
+        if (person is null || !person.HasPreferredImages)
         {
             return [];
         }

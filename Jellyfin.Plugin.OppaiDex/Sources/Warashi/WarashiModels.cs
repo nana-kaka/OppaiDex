@@ -27,4 +27,6 @@ public sealed class WarashiPerson
     public IReadOnlyList<string> Aliases { get; init; } = [];
 
     public IReadOnlyList<string> ImageUrls { get; init; } = [];
+
+    public bool HasPreferredImages { get; init; }
 }

@@ -34,7 +34,9 @@ their Japanese originals when available.
 
 Performer matching is restricted to exact normalized names and aliases to
 reduce false associations. During movie imports, a matching WAPdB portrait
-and person ID take precedence over the lower-resolution R18.dev portrait.
+and person ID take precedence over the lower-resolution R18.dev portrait when
+WAPdB has a full performer profile. Low-resolution WAPdB mini-profile images
+do not replace a larger R18.dev portrait.
 
 ### JavDatabase
 
