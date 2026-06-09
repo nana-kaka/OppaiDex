@@ -10,6 +10,7 @@ using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Providers;
+using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.OppaiDex.Providers;
 
@@ -18,19 +19,22 @@ public sealed class OppaiDexMovieProvider :
     IHasOrder
 {
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ILogger<OppaiDexMovieProvider> _logger;
     private readonly IReadOnlyList<IPersonMetadataEnricher> _personEnrichers;
     private readonly MetadataSourceRegistry _sourceRegistry;
 
     public OppaiDexMovieProvider(
         MetadataSourceRegistry sourceRegistry,
         IEnumerable<IPersonMetadataEnricher> personEnrichers,
-        IHttpClientFactory httpClientFactory)
+        IHttpClientFactory httpClientFactory,
+        ILogger<OppaiDexMovieProvider> logger)
     {
         _sourceRegistry = sourceRegistry;
         _personEnrichers = personEnrichers
             .OrderBy(enricher => enricher.Order)
             .ToArray();
         _httpClientFactory = httpClientFactory;
+        _logger = logger;
     }
 
     public string Name => Constants.PluginName;
@@ -42,9 +46,14 @@ public sealed class OppaiDexMovieProvider :
         CancellationToken cancellationToken)
     {
         var results = new List<RemoteSearchResult>();
+        var sources = _sourceRegistry
+            .GetCandidates(searchInfo.ProviderIds)
+            .ToArray();
+        var fallbackAttempted = false;
 
-        foreach (var source in _sourceRegistry.GetCandidates(searchInfo.ProviderIds))
+        for (var index = 0; index < sources.Length; index++)
         {
+            var source = sources[index];
             var id = source.GetLookupId(
                 searchInfo.ProviderIds,
                 searchInfo.Path,
@@ -59,9 +68,11 @@ public sealed class OppaiDexMovieProvider :
                 .ConfigureAwait(false);
             if (metadata is null)
             {
+                fallbackAttempted |= LogFallbackAttempt(sources, index, id);
                 continue;
             }
 
+            LogFallbackSuccess(fallbackAttempted, source, id);
             results.Add(new RemoteSearchResult
             {
                 Name = metadata.Name,
@@ -84,8 +95,14 @@ public sealed class OppaiDexMovieProvider :
         MovieInfo info,
         CancellationToken cancellationToken)
     {
-        foreach (var source in _sourceRegistry.GetCandidates(info.ProviderIds))
+        var sources = _sourceRegistry
+            .GetCandidates(info.ProviderIds)
+            .ToArray();
+        var fallbackAttempted = false;
+
+        for (var index = 0; index < sources.Length; index++)
         {
+            var source = sources[index];
             var id = source.GetLookupId(info.ProviderIds, info.Path, info.Name);
             if (string.IsNullOrWhiteSpace(id))
             {
@@ -97,9 +114,12 @@ public sealed class OppaiDexMovieProvider :
                 .ConfigureAwait(false);
             if (metadata is not null)
             {
+                LogFallbackSuccess(fallbackAttempted, source, id);
                 return await CreateResultAsync(metadata, cancellationToken)
                     .ConfigureAwait(false);
             }
+
+            fallbackAttempted |= LogFallbackAttempt(sources, index, id);
         }
 
         return new MetadataResult<Movie>();
@@ -112,6 +132,41 @@ public sealed class OppaiDexMovieProvider :
         return _httpClientFactory
             .CreateClient(NamedClient.Default)
             .GetAsync(url, cancellationToken);
+    }
+
+    private bool LogFallbackAttempt(
+        IReadOnlyList<IMovieMetadataSource> sources,
+        int currentIndex,
+        string id)
+    {
+        var nextIndex = currentIndex + 1;
+        if (nextIndex >= sources.Count)
+        {
+            return false;
+        }
+
+        _logger.LogInformation(
+            "{SourceName} returned no metadata for {MovieId}; trying fallback {FallbackSourceName}.",
+            sources[currentIndex].DisplayName,
+            id,
+            sources[nextIndex].DisplayName);
+        return true;
+    }
+
+    private void LogFallbackSuccess(
+        bool fallbackAttempted,
+        IMovieMetadataSource source,
+        string id)
+    {
+        if (!fallbackAttempted)
+        {
+            return;
+        }
+
+        _logger.LogInformation(
+            "Fallback {SourceName} found metadata for {MovieId}.",
+            source.DisplayName,
+            id);
     }
 
     private async Task<MetadataResult<Movie>> CreateResultAsync(
