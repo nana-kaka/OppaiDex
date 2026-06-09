@@ -16,6 +16,13 @@
                             The media file identifier replaces the {id} placeholder.
                         </div>
                     </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="R18RequestDelayMilliseconds">R18.dev request delay (milliseconds)</label>
+                        <input id="R18RequestDelayMilliseconds" name="R18RequestDelayMilliseconds" type="number" min="0" max="60000" step="100" is="emby-input" required />
+                        <div class="fieldDescription">
+                            Minimum delay between API requests. Increase this value if R18.dev returns HTTP 429 responses.
+                        </div>
+                    </div>
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
                             <input id="WarashiEnabled" name="WarashiEnabled" type="checkbox" is="emby-checkbox" />
@@ -47,6 +54,8 @@
                     Dashboard.showLoadingMsg();
                     ApiClient.getPluginConfiguration(OppaiDexConfig.pluginUniqueId).then(function (config) {
                         document.querySelector('#R18ApiUrlTemplate').value = config.R18ApiUrlTemplate;
+                        document.querySelector('#R18RequestDelayMilliseconds').value =
+                            config.R18RequestDelayMilliseconds ?? 1000;
                         document.querySelector('#WarashiEnabled').checked = config.WarashiEnabled;
                         document.querySelector('#WarashiBaseUrl').value = config.WarashiBaseUrl;
                         Dashboard.hideLoadingMsg();
@@ -58,6 +67,8 @@
                     Dashboard.showLoadingMsg();
                     ApiClient.getPluginConfiguration(OppaiDexConfig.pluginUniqueId).then(function (config) {
                         config.R18ApiUrlTemplate = document.querySelector('#R18ApiUrlTemplate').value;
+                        config.R18RequestDelayMilliseconds = Number(
+                            document.querySelector('#R18RequestDelayMilliseconds').value);
                         config.WarashiEnabled = document.querySelector('#WarashiEnabled').checked;
                         config.WarashiBaseUrl = document.querySelector('#WarashiBaseUrl').value;
                         ApiClient.updatePluginConfiguration(OppaiDexConfig.pluginUniqueId, config).then(function (result) {

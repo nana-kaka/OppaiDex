@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -16,10 +18,15 @@ using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.OppaiDex.Sources.R18;
 
-public sealed class R18MetadataSource : IMovieMetadataSource
+public sealed class R18MetadataSource : IMovieMetadataSource, IDisposable
 {
+    private const int MaxRequestAttempts = 3;
     private const string PersonImageBaseUrl =
         "https://awsimgsrc.dmm.com/dig/mono/actjpgs/";
+    private static readonly TimeSpan MovieCacheLifetime =
+        TimeSpan.FromMinutes(30);
+    private static readonly TimeSpan MaximumRetryDelay =
+        TimeSpan.FromMinutes(5);
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
     private static readonly Regex MovieIdRegex = new(
@@ -29,7 +36,11 @@ public sealed class R18MetadataSource : IMovieMetadataSource
         | RegexOptions.Compiled);
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<R18MetadataSource> _logger;
+    private readonly ConcurrentDictionary<string, CachedMovie> _movieCache =
+        new(StringComparer.OrdinalIgnoreCase);
     private readonly PluginConfigurationAccessor _pluginConfiguration;
+    private readonly SemaphoreSlim _requestGate = new(1, 1);
+    private DateTimeOffset _nextRequestAt = DateTimeOffset.MinValue;
 
     public R18MetadataSource(
         IHttpClientFactory httpClientFactory,
@@ -48,6 +59,11 @@ public sealed class R18MetadataSource : IMovieMetadataSource
     public int Order => 0;
 
     public bool IsEnabled => true;
+
+    public void Dispose()
+    {
+        _requestGate.Dispose();
+    }
 
     public string? GetLookupId(
         IReadOnlyDictionary<string, string> providerIds,
@@ -108,6 +124,11 @@ public sealed class R18MetadataSource : IMovieMetadataSource
         }
 
         var normalizedId = NormalizeId(id);
+        if (TryGetCachedMovie(normalizedId, out var cachedMovie))
+        {
+            return cachedMovie;
+        }
+
         var url = template.Replace(
             "{id}",
             Uri.EscapeDataString(normalizedId),
@@ -119,48 +140,173 @@ public sealed class R18MetadataSource : IMovieMetadataSource
             return null;
         }
 
+        await _requestGate
+            .WaitAsync(cancellationToken)
+            .ConfigureAwait(false);
         try
         {
-            using var httpClient =
-                _httpClientFactory.CreateClient(NamedClient.Default);
-            using var response = await httpClient
-                .GetAsync(requestUri, cancellationToken)
+            if (TryGetCachedMovie(normalizedId, out cachedMovie))
+            {
+                return cachedMovie;
+            }
+
+            var movie = await FetchMovieAsync(
+                    requestUri,
+                    normalizedId,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            if (movie is not null)
+            {
+                _movieCache[normalizedId] = new CachedMovie(
+                    movie,
+                    DateTimeOffset.UtcNow.Add(MovieCacheLifetime));
+            }
+
+            return movie;
+        }
+        finally
+        {
+            _requestGate.Release();
+        }
+    }
+
+    private async Task<R18Movie?> FetchMovieAsync(
+        Uri requestUri,
+        string normalizedId,
+        CancellationToken cancellationToken)
+    {
+        using var httpClient =
+            _httpClientFactory.CreateClient(NamedClient.Default);
+
+        for (var attempt = 1; attempt <= MaxRequestAttempts; attempt++)
+        {
+            await WaitForRequestSlotAsync(cancellationToken)
                 .ConfigureAwait(false);
 
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                _logger.LogWarning(
-                    "R18.dev returned HTTP {StatusCode} for {MovieId}.",
-                    (int)response.StatusCode,
+                using var response = await httpClient
+                    .GetAsync(requestUri, cancellationToken)
+                    .ConfigureAwait(false);
+
+                if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    var retryDelay = GetRetryDelay(response, attempt);
+                    _nextRequestAt = DateTimeOffset.UtcNow.Add(retryDelay);
+
+                    if (attempt == MaxRequestAttempts)
+                    {
+                        _logger.LogWarning(
+                            "R18.dev returned HTTP 429 for {MovieId}; giving up after {AttemptCount} attempts.",
+                            normalizedId,
+                            MaxRequestAttempts);
+                        return null;
+                    }
+
+                    _logger.LogWarning(
+                        "R18.dev returned HTTP 429 for {MovieId}; retrying in {DelaySeconds:F1} seconds.",
+                        normalizedId,
+                        retryDelay.TotalSeconds);
+                    continue;
+                }
+
+                ScheduleNextRequest(GetConfiguredRequestDelay());
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning(
+                        "R18.dev returned HTTP {StatusCode} for {MovieId}.",
+                        (int)response.StatusCode,
+                        normalizedId);
+                    return null;
+                }
+
+                await using var stream = await response.Content
+                    .ReadAsStreamAsync(cancellationToken)
+                    .ConfigureAwait(false);
+                return await JsonSerializer.DeserializeAsync<R18Movie>(
+                        stream,
+                        JsonOptions,
+                        cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            catch (HttpRequestException exception)
+            {
+                ScheduleNextRequest(GetConfiguredRequestDelay());
+                _logger.LogError(
+                    exception,
+                    "Could not retrieve R18.dev metadata for {MovieId}.",
                     normalizedId);
                 return null;
             }
+            catch (JsonException exception)
+            {
+                _logger.LogError(
+                    exception,
+                    "Could not parse R18.dev metadata for {MovieId}.",
+                    normalizedId);
+                return null;
+            }
+        }
 
-            await using var stream = await response.Content
-                .ReadAsStreamAsync(cancellationToken)
-                .ConfigureAwait(false);
-            return await JsonSerializer.DeserializeAsync<R18Movie>(
-                    stream,
-                    JsonOptions,
-                    cancellationToken)
-                .ConfigureAwait(false);
-        }
-        catch (HttpRequestException exception)
+        return null;
+    }
+
+    private async Task WaitForRequestSlotAsync(
+        CancellationToken cancellationToken)
+    {
+        var delay = _nextRequestAt - DateTimeOffset.UtcNow;
+        if (delay > TimeSpan.Zero)
         {
-            _logger.LogError(
-                exception,
-                "Could not retrieve R18.dev metadata for {MovieId}.",
-                normalizedId);
-            return null;
+            await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
         }
-        catch (JsonException exception)
+    }
+
+    private void ScheduleNextRequest(TimeSpan delay)
+    {
+        _nextRequestAt = DateTimeOffset.UtcNow.Add(delay);
+    }
+
+    private TimeSpan GetConfiguredRequestDelay()
+    {
+        var milliseconds = Math.Clamp(
+            _pluginConfiguration.Current.R18RequestDelayMilliseconds,
+            0,
+            60000);
+        return TimeSpan.FromMilliseconds(milliseconds);
+    }
+
+    private static TimeSpan GetRetryDelay(
+        HttpResponseMessage response,
+        int attempt)
+    {
+        var retryAfter = response.Headers.RetryAfter;
+        var delay = retryAfter?.Delta
+            ?? retryAfter?.Date - DateTimeOffset.UtcNow
+            ?? TimeSpan.FromSeconds(5 * Math.Pow(2, attempt - 1));
+
+        if (delay <= TimeSpan.Zero)
         {
-            _logger.LogError(
-                exception,
-                "Could not parse R18.dev metadata for {MovieId}.",
-                normalizedId);
-            return null;
+            delay = TimeSpan.FromSeconds(1);
         }
+
+        return delay > MaximumRetryDelay ? MaximumRetryDelay : delay;
+    }
+
+    private bool TryGetCachedMovie(
+        string normalizedId,
+        out R18Movie? movie)
+    {
+        if (_movieCache.TryGetValue(normalizedId, out var cached)
+            && cached.ExpiresAt > DateTimeOffset.UtcNow)
+        {
+            movie = cached.Movie;
+            return true;
+        }
+
+        _movieCache.TryRemove(normalizedId, out _);
+        movie = null;
+        return false;
     }
 
     private static MovieMetadata MapMovie(R18Movie movie, string fallbackId)
@@ -347,4 +493,8 @@ public sealed class R18MetadataSource : IMovieMetadataSource
         return string.Concat(id.Where(char.IsLetterOrDigit))
             .ToLower(CultureInfo.InvariantCulture);
     }
+
+    private sealed record CachedMovie(
+        R18Movie Movie,
+        DateTimeOffset ExpiresAt);
 }
