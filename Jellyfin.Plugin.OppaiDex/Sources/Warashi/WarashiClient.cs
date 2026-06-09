@@ -17,7 +17,7 @@ namespace Jellyfin.Plugin.OppaiDex.Sources.Warashi;
 public sealed class WarashiClient
 {
     private static readonly Regex ProfileIdRegex = new(
-        @"/en/(?<section>s-\d+-\d+)/[^/]+/[^/]+/(?<id>\d+)(?:$|[?#])",
+        @"/en/(?<section>s-\d+-\d+)/(?<slug>[^/]+)/(?<profileType>[^/]+)/(?<id>\d+)(?:$|[?#])",
         RegexOptions.Compiled | RegexOptions.CultureInvariant);
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<WarashiClient> _logger;
@@ -91,14 +91,13 @@ public sealed class WarashiClient
         string id,
         CancellationToken cancellationToken)
     {
-        if (!TryGetBaseUri(out var baseUri) || !TryParseId(id, out var section, out var numericId))
+        if (!TryGetBaseUri(out var baseUri)
+            || !TryGetProfilePath(id, out var profilePath))
         {
             return null;
         }
 
-        var uri = new Uri(
-            baseUri,
-            $"/en/{section}/profile/asian-pornstar/{numericId}");
+        var uri = new Uri(baseUri, profilePath);
         var document = await SendAsync(
                 HttpMethod.Get,
                 uri,
@@ -112,7 +111,10 @@ public sealed class WarashiClient
 
         var name = CleanText(
             document.QuerySelector("#pornostar-profil [itemprop=name]")
-                ?.TextContent);
+                ?.TextContent)
+            ?? CleanText(
+                document.QuerySelector("#casting-profil [itemprop=name]")
+                    ?.GetAttribute("content"));
         if (string.IsNullOrWhiteSpace(name))
         {
             return null;
@@ -133,13 +135,18 @@ public sealed class WarashiClient
         var aliases = document
             .QuerySelectorAll("#pornostar-profil-noms-alternatifs li")
             .Select(element => CleanText(element.TextContent))
+            .Concat(document
+                .QuerySelectorAll("#casting-profil [itemprop=additionalName]")
+                .Select(element => CleanText(
+                    element.GetAttribute("content"))))
             .Where(alias => !string.IsNullOrWhiteSpace(alias))
             .Cast<string>()
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
 
         var images = document
-            .QuerySelectorAll("#pornostar-profil-photos img")
+            .QuerySelectorAll(
+                "#pornostar-profil-photos img, #casting-profil-preview img")
             .Select(image =>
                 image.ParentElement?.LocalName == "a"
                     ? image.ParentElement.GetAttribute("href")
@@ -152,13 +159,15 @@ public sealed class WarashiClient
 
         return new WarashiPerson
         {
-            Id = $"{section}/{numericId}",
+            Id = id,
             Name = name,
             BirthDate = birthDate,
             BirthPlace = CleanText(
                 document.QuerySelector("[itemprop=birthPlace]")?.TextContent),
             Aliases = aliases,
-            ImageUrls = images
+            ImageUrls = images,
+            HasPreferredImages =
+                document.QuerySelector("#pornostar-profil") is not null
         };
     }
 
@@ -229,6 +238,7 @@ public sealed class WarashiClient
             Aliases = row
                 .QuerySelectorAll("p:last-child span")
                 .Select(element => CleanText(element.TextContent))
+                .Concat(GetInlineAliases(name))
                 .Where(alias => !string.IsNullOrWhiteSpace(alias))
                 .Cast<string>()
                 .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -257,7 +267,19 @@ public sealed class WarashiClient
         var match = ProfileIdRegex.Match(path ?? string.Empty);
         if (match.Success)
         {
-            id = $"{match.Groups["section"].Value}/{match.Groups["id"].Value}";
+            var section = match.Groups["section"].Value;
+            var numericId = match.Groups["id"].Value;
+            id = string.Equals(
+                    section,
+                    "s-2-0",
+                    StringComparison.Ordinal)
+                ? $"{section}/{numericId}"
+                : string.Join(
+                    '/',
+                    section,
+                    match.Groups["slug"].Value,
+                    match.Groups["profileType"].Value,
+                    numericId);
             return true;
         }
 
@@ -265,24 +287,38 @@ public sealed class WarashiClient
         return false;
     }
 
-    private static bool TryParseId(
+    private static bool TryGetProfilePath(
         string id,
-        out string section,
-        out string numericId)
+        out string profilePath)
     {
         var parts = id.Split('/', StringSplitOptions.RemoveEmptyEntries);
         if (parts.Length == 2
             && parts[0].StartsWith("s-", StringComparison.Ordinal)
             && parts[1].All(char.IsDigit))
         {
-            section = parts[0];
-            numericId = parts[1];
+            profilePath =
+                $"/en/{parts[0]}/profile/asian-pornstar/{parts[1]}";
             return true;
         }
 
-        section = string.Empty;
-        numericId = string.Empty;
+        if (parts.Length == 4
+            && parts[0].StartsWith("s-", StringComparison.Ordinal)
+            && parts[3].All(char.IsDigit))
+        {
+            profilePath = string.Concat("/en/", string.Join('/', parts));
+            return true;
+        }
+
+        profilePath = string.Empty;
         return false;
+    }
+
+    private static IEnumerable<string?> GetInlineAliases(string name)
+    {
+        var separatorIndex = name.IndexOf(" - ", StringComparison.Ordinal);
+        return separatorIndex >= 0
+            ? [CleanText(name[(separatorIndex + 3)..])]
+            : [];
     }
 
     private static string? GetAbsoluteHttpUrl(Uri baseUri, string? path)
