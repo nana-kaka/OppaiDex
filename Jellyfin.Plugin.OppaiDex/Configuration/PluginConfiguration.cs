@@ -17,6 +17,8 @@ public class PluginConfiguration : BasePluginConfiguration
     public PluginConfiguration()
     {
         R18ApiUrlTemplate = Constants.DefaultR18ApiUrlTemplate;
+        R18RequestDelayMilliseconds =
+            Constants.DefaultR18RequestDelayMilliseconds;
         WarashiBaseUrl = Constants.DefaultWarashiBaseUrl;
         WarashiEnabled = true;
     }
@@ -26,6 +28,11 @@ public class PluginConfiguration : BasePluginConfiguration
     /// The movie identifier replaces the {id} placeholder.
     /// </summary>
     public string R18ApiUrlTemplate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the minimum delay between R18.dev requests.
+    /// </summary>
+    public int R18RequestDelayMilliseconds { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether WAPdB person metadata is enabled.

@@ -71,6 +71,8 @@ docker compose up
 ## External Services
 
 - Treat R18.dev and WAPdB responses as untrusted and potentially incomplete.
+- Preserve shared request throttling, caching, and `Retry-After` handling when
+  changing R18.dev network code.
 - Preserve cancellation tokens and handle HTTP or parsing failures without
   crashing Jellyfin metadata scans.
 - Do not add credentials, cookies, downloaded pages, or user library data to

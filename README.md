@@ -52,6 +52,9 @@ OppaiDex extracts catalogue IDs from movie file names. Examples:
 ## Configuration
 
 - The R18.dev API URL template can be changed when necessary.
+- R18.dev requests are serialized, cached for 30 minutes, and delayed by one
+  second by default. Increase the configurable delay if the service still
+  responds with HTTP 429.
 - WAPdB performer enrichment can be enabled or disabled independently.
 - Source base URLs are configurable to accommodate future endpoint changes.
 
