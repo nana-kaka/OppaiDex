@@ -25,6 +25,23 @@
                     </div>
                     <div class="checkboxContainer checkboxContainer-withDescription">
                         <label class="emby-checkbox-label">
+                            <input id="JavDatabaseEnabled" name="JavDatabaseEnabled" type="checkbox" is="emby-checkbox" />
+                            <span>Enable JavDatabase fallback metadata</span>
+                        </label>
+                        <div class="fieldDescription">
+                            Uses JavDatabase only when R18.dev has no metadata for an exact catalogue ID.
+                        </div>
+                    </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="JavDatabaseBaseUrl">JavDatabase base URL</label>
+                        <input id="JavDatabaseBaseUrl" name="JavDatabaseBaseUrl" type="text" is="emby-input" required />
+                    </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="JavDatabaseRequestDelayMilliseconds">JavDatabase request delay (milliseconds)</label>
+                        <input id="JavDatabaseRequestDelayMilliseconds" name="JavDatabaseRequestDelayMilliseconds" type="number" min="0" max="60000" step="100" is="emby-input" required />
+                    </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
                             <input id="WarashiEnabled" name="WarashiEnabled" type="checkbox" is="emby-checkbox" />
                             <span>Enable WAPdB person metadata</span>
                         </label>
@@ -56,6 +73,12 @@
                         document.querySelector('#R18ApiUrlTemplate').value = config.R18ApiUrlTemplate;
                         document.querySelector('#R18RequestDelayMilliseconds').value =
                             config.R18RequestDelayMilliseconds ?? 1000;
+                        document.querySelector('#JavDatabaseEnabled').checked =
+                            config.JavDatabaseEnabled ?? true;
+                        document.querySelector('#JavDatabaseBaseUrl').value =
+                            config.JavDatabaseBaseUrl ?? 'https://www.javdatabase.com';
+                        document.querySelector('#JavDatabaseRequestDelayMilliseconds').value =
+                            config.JavDatabaseRequestDelayMilliseconds ?? 1500;
                         document.querySelector('#WarashiEnabled').checked = config.WarashiEnabled;
                         document.querySelector('#WarashiBaseUrl').value = config.WarashiBaseUrl;
                         Dashboard.hideLoadingMsg();
@@ -69,6 +92,12 @@
                         config.R18ApiUrlTemplate = document.querySelector('#R18ApiUrlTemplate').value;
                         config.R18RequestDelayMilliseconds = Number(
                             document.querySelector('#R18RequestDelayMilliseconds').value);
+                        config.JavDatabaseEnabled =
+                            document.querySelector('#JavDatabaseEnabled').checked;
+                        config.JavDatabaseBaseUrl =
+                            document.querySelector('#JavDatabaseBaseUrl').value;
+                        config.JavDatabaseRequestDelayMilliseconds = Number(
+                            document.querySelector('#JavDatabaseRequestDelayMilliseconds').value);
                         config.WarashiEnabled = document.querySelector('#WarashiEnabled').checked;
                         config.WarashiBaseUrl = document.querySelector('#WarashiBaseUrl').value;
                         ApiClient.updatePluginConfiguration(OppaiDexConfig.pluginUniqueId, config).then(function (result) {

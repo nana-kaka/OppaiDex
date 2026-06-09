@@ -30,6 +30,8 @@ OppaiDex is a Jellyfin 10.11 metadata plugin targeting .NET 9.
 - WAPdB portraits and person IDs take precedence over R18.dev performer
   portraits after an exact normalized name or alias match.
 - Keep R18.dev portraits as fallback data.
+- Keep R18.dev as the primary movie source and JavDatabase at a lower fallback
+  priority. JavDatabase matches must verify the returned DVD ID exactly.
 - Avoid fuzzy performer matching that could associate metadata with the wrong
   person.
 

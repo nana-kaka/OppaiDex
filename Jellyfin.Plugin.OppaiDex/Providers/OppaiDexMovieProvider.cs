@@ -73,6 +73,8 @@ public sealed class OppaiDexMovieProvider :
                     metadata.ProviderIds,
                     StringComparer.OrdinalIgnoreCase)
             });
+
+            break;
         }
 
         return results;
