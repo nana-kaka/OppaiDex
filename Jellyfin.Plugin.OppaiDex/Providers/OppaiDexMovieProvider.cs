@@ -197,7 +197,24 @@ public sealed class OppaiDexMovieProvider :
             Item = item
         };
 
-        foreach (var person in metadata.People)
+        var enrichedPeople = await EnrichPeopleAsync(
+                metadata.People,
+                cancellationToken)
+            .ConfigureAwait(false);
+        foreach (var person in enrichedPeople.Select(CreatePersonInfo))
+        {
+            result.AddPerson(person);
+        }
+
+        return result;
+    }
+
+    private async Task<IReadOnlyList<MoviePersonMetadata>> EnrichPeopleAsync(
+        IReadOnlyList<MoviePersonMetadata> people,
+        CancellationToken cancellationToken)
+    {
+        var enrichedPeople = new List<MoviePersonMetadata>(people.Count);
+        foreach (var person in people)
         {
             var enrichedPerson = person;
             foreach (var enricher in _personEnrichers)
@@ -207,17 +224,22 @@ public sealed class OppaiDexMovieProvider :
                     .ConfigureAwait(false);
             }
 
-            result.AddPerson(new PersonInfo
-            {
-                Name = enrichedPerson.Name,
-                Type = enrichedPerson.Kind,
-                ImageUrl = enrichedPerson.ImageUrl,
-                ProviderIds = new Dictionary<string, string>(
-                    enrichedPerson.ProviderIds,
-                    StringComparer.OrdinalIgnoreCase)
-            });
+            enrichedPeople.Add(enrichedPerson);
         }
 
-        return result;
+        return enrichedPeople;
+    }
+
+    private static PersonInfo CreatePersonInfo(MoviePersonMetadata person)
+    {
+        return new PersonInfo
+        {
+            Name = person.Name,
+            Type = person.Kind,
+            ImageUrl = person.ImageUrl,
+            ProviderIds = new Dictionary<string, string>(
+                person.ProviderIds,
+                StringComparer.OrdinalIgnoreCase)
+        };
     }
 }

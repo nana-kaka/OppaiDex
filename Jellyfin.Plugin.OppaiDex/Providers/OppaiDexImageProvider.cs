@@ -69,19 +69,10 @@ public sealed class OppaiDexImageProvider : IRemoteImageProvider
                     continue;
                 }
 
-                foreach (var image in CreateImages(source.DisplayName, metadata))
-                {
-                    if (imageUrls.Add(image.Url))
-                    {
-                        images.Add(image);
-                    }
-                }
+                images.AddRange(CreateImages(source.DisplayName, metadata)
+                    .Where(image => imageUrls.Add(image.Url)));
             }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (Exception exception)
+            catch (HttpRequestException exception)
             {
                 _logger.LogWarning(
                     exception,
