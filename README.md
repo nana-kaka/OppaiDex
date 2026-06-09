@@ -107,6 +107,12 @@ To publish a release:
    files to the release, and updates `manifest.json` on the `gh-pages`
    branch.
 
+The publish workflow validates the release tag before building. A tag such as
+`v0.3.2` is rejected unless `build.yaml` contains `0.3.2` and
+`Directory.Build.props` contains the matching project, assembly, and file
+versions. A failed validation leaves the GitHub release without plugin
+artifacts or a manifest update.
+
 The first manifest run creates the `gh-pages` branch automatically. The
 **Update Plugin Manifest** workflow can also be started manually to rebuild or
 repair the manifest without publishing another release.
