@@ -9,6 +9,14 @@
     "owner": "Nana-kaka",
     "versions": [
       {
+        "changelog": "## What's New\r\n\r\n* Release v0.4.0 (#12) @nana-kaka\r\n\r\n### Features and improvements\r\n\r\n* feat: improve movie handler to show r18 and javdatabase (#11) @nana-kaka\r\n\r\n### Bug fixes\r\n\r\n* fix broken version, release v0.3.2 (#9) @nana-kaka\r\n\r\n### Maintenance\r\n\r\n* ci: reject tag if not match to build meta (#10) @nana-kaka",
+        "checksum": "8092650fc4542c1d9d0ab1e2981ddff5",
+        "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.4.0/oppaidex_0.4.0.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-06-09T16:28:21Z",
+        "version": "0.4.0"
+      },
+      {
         "changelog": "## What's New\r\n\r\n### Bug fixes\r\n\r\n* Fix WAPdB portrait selection (#8) @nana-kaka",
         "checksum": "198645edfca0beaabcb4f14cde7cedc2",
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.3.1/oppaidex_0.2.0.0.zip",
