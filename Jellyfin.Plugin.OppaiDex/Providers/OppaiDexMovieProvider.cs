@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Jellyfin.Plugin.OppaiDex.Configuration;
 using Jellyfin.Plugin.OppaiDex.Metadata;
 using MediaBrowser.Common.Net;
 using MediaBrowser.Controller.Entities;
@@ -21,11 +22,13 @@ public sealed class OppaiDexMovieProvider :
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<OppaiDexMovieProvider> _logger;
     private readonly IReadOnlyList<IPersonMetadataEnricher> _personEnrichers;
+    private readonly PluginConfigurationAccessor _pluginConfiguration;
     private readonly MetadataSourceRegistry _sourceRegistry;
 
     public OppaiDexMovieProvider(
         MetadataSourceRegistry sourceRegistry,
         IEnumerable<IPersonMetadataEnricher> personEnrichers,
+        PluginConfigurationAccessor pluginConfiguration,
         IHttpClientFactory httpClientFactory,
         ILogger<OppaiDexMovieProvider> logger)
     {
@@ -33,6 +36,7 @@ public sealed class OppaiDexMovieProvider :
         _personEnrichers = personEnrichers
             .OrderBy(enricher => enricher.Order)
             .ToArray();
+        _pluginConfiguration = pluginConfiguration;
         _httpClientFactory = httpClientFactory;
         _logger = logger;
     }
@@ -87,7 +91,7 @@ public sealed class OppaiDexMovieProvider :
             LogFallbackSuccess(fallbackAttempted, source, id);
             results.Add(new RemoteSearchResult
             {
-                Name = metadata.Name,
+                Name = GetDisplayName(metadata),
                 ImageUrl = metadata.PrimaryImage?.ThumbnailUrl
                     ?? metadata.PrimaryImage?.Url,
                 Overview = metadata.Overview,
@@ -211,7 +215,7 @@ public sealed class OppaiDexMovieProvider :
     {
         var item = new Movie
         {
-            Name = metadata.Name,
+            Name = GetDisplayName(metadata),
             OriginalTitle = metadata.OriginalTitle,
             Overview = metadata.Overview,
             PremiereDate = metadata.ReleaseDate,
@@ -243,6 +247,20 @@ public sealed class OppaiDexMovieProvider :
         }
 
         return result;
+    }
+
+    private string GetDisplayName(MovieMetadata metadata)
+    {
+        if (!_pluginConfiguration.Current.PrefixMovieTitlesWithCatalogueId
+            || string.IsNullOrWhiteSpace(metadata.CatalogueId))
+        {
+            return metadata.Name;
+        }
+
+        var prefix = $"[{metadata.CatalogueId}]";
+        return metadata.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
+            ? metadata.Name
+            : $"{prefix} {metadata.Name}";
     }
 
     private async Task<IReadOnlyList<MoviePersonMetadata>> EnrichPeopleAsync(

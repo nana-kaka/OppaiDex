@@ -275,6 +275,7 @@ public sealed class JavDatabaseMetadataSource :
         return new MovieMetadata
         {
             Name = title,
+            CatalogueId = dvdId,
             ReleaseDate = releaseDate,
             RuntimeMinutes = runtime,
             Genres = genres,

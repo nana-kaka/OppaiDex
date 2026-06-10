@@ -74,6 +74,8 @@ OppaiDex extracts catalogue IDs from movie file names. Examples:
   independently.
 - WAPdB performer enrichment can be enabled or disabled independently.
 - Source base URLs are configurable to accommodate future endpoint changes.
+- Movie titles can optionally be prefixed with their catalogue ID, for example
+  `[SONE-444] Movie Title`.
 
 ## Development
 
