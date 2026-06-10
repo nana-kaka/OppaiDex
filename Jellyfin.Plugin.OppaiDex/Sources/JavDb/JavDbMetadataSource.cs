@@ -20,6 +20,8 @@ namespace Jellyfin.Plugin.OppaiDex.Sources.JavDb;
 
 public sealed class JavDbMetadataSource : IMovieMetadataSource, IDisposable
 {
+    private static readonly TimeSpan AccessBlockedCooldown =
+        TimeSpan.FromMinutes(30);
     private static readonly TimeSpan CacheLifetime = TimeSpan.FromHours(6);
     private static readonly TimeSpan NotFoundCacheLifetime =
         TimeSpan.FromMinutes(30);
@@ -39,6 +41,7 @@ public sealed class JavDbMetadataSource : IMovieMetadataSource, IDisposable
     private readonly ILogger<JavDbMetadataSource> _logger;
     private readonly PluginConfigurationAccessor _pluginConfiguration;
     private readonly SemaphoreSlim _requestGate = new(1, 1);
+    private DateTimeOffset _blockedUntil = DateTimeOffset.MinValue;
     private DateTimeOffset _nextRequestAt = DateTimeOffset.MinValue;
 
     public JavDbMetadataSource(
@@ -108,6 +111,11 @@ public sealed class JavDbMetadataSource : IMovieMetadataSource, IDisposable
             return cachedMetadata;
         }
 
+        if (IsTemporarilyBlocked())
+        {
+            return null;
+        }
+
         if (!TryGetBaseUri(out var baseUri))
         {
             return null;
@@ -119,6 +127,11 @@ public sealed class JavDbMetadataSource : IMovieMetadataSource, IDisposable
             if (TryGetCachedMetadata(normalizedId, out cachedMetadata))
             {
                 return cachedMetadata;
+            }
+
+            if (IsTemporarilyBlocked())
+            {
+                return null;
             }
 
             var delay = _nextRequestAt - DateTimeOffset.UtcNow;
@@ -173,7 +186,17 @@ public sealed class JavDbMetadataSource : IMovieMetadataSource, IDisposable
                 _httpClientFactory.CreateClient(NamedClient.Default);
             using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
             request.Headers.UserAgent.ParseAdd(
-                "Mozilla/5.0 (compatible; OppaiDex/1.0)");
+                "Mozilla/5.0 (X11; Linux x86_64) "
+                + "AppleWebKit/537.36 (KHTML, like Gecko) "
+                + "Chrome/137.0.0.0 Safari/537.36");
+            request.Headers.Accept.ParseAdd(
+                "text/html,application/xhtml+xml,application/xml;q=0.9,"
+                + "image/avif,image/webp,*/*;q=0.8");
+            request.Headers.AcceptLanguage.ParseAdd("en-US,en;q=0.9");
+            request.Headers.Referrer = baseUri;
+            request.Headers.TryAddWithoutValidation(
+                "Upgrade-Insecure-Requests",
+                "1");
             using var response = await client
                 .SendAsync(request, cancellationToken)
                 .ConfigureAwait(false);
@@ -181,6 +204,19 @@ public sealed class JavDbMetadataSource : IMovieMetadataSource, IDisposable
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
                 return new FetchResult(null, true);
+            }
+
+            if (response.StatusCode is HttpStatusCode.Forbidden
+                or HttpStatusCode.TooManyRequests)
+            {
+                var cooldown = GetAccessBlockedCooldown(response);
+                _blockedUntil = DateTimeOffset.UtcNow.Add(cooldown);
+                _logger.LogWarning(
+                    "JavDB returned HTTP {StatusCode} for {MovieId}; pausing JavDB requests for {DelayMinutes:F0} minutes.",
+                    (int)response.StatusCode,
+                    expectedId,
+                    cooldown.TotalMinutes);
+                return new FetchResult(null, false);
             }
 
             if (!response.IsSuccessStatusCode)
@@ -200,12 +236,16 @@ public sealed class JavDbMetadataSource : IMovieMetadataSource, IDisposable
                 .ConfigureAwait(false);
             if (IsAccessBlocked(document))
             {
+                _blockedUntil = DateTimeOffset.UtcNow.Add(
+                    AccessBlockedCooldown);
                 _logger.LogWarning(
-                    "JavDB did not expose public search results for {MovieId}; the request may have been redirected to a login or challenge page.",
-                    expectedId);
+                    "JavDB did not expose public search results for {MovieId}; pausing JavDB requests for {DelayMinutes:F0} minutes.",
+                    expectedId,
+                    AccessBlockedCooldown.TotalMinutes);
                 return new FetchResult(null, false);
             }
 
+            _blockedUntil = DateTimeOffset.MinValue;
             return new FetchResult(
                 ParseMetadata(document, expectedId, baseUri),
                 true);
@@ -291,6 +331,32 @@ public sealed class JavDbMetadataSource : IMovieMetadataSource, IDisposable
     {
         return document.QuerySelector("form[action='/user_sessions']") is not null
             || document.QuerySelector("script[src*='challenge-platform']") is not null;
+    }
+
+    private bool IsTemporarilyBlocked()
+    {
+        return _blockedUntil > DateTimeOffset.UtcNow;
+    }
+
+    private static TimeSpan GetAccessBlockedCooldown(
+        HttpResponseMessage response)
+    {
+        var retryAfter = response.Headers.RetryAfter;
+        if (retryAfter?.Delta is { } delta && delta > TimeSpan.Zero)
+        {
+            return delta;
+        }
+
+        if (retryAfter?.Date is { } date)
+        {
+            var delay = date - DateTimeOffset.UtcNow;
+            if (delay > TimeSpan.Zero)
+            {
+                return delay;
+            }
+        }
+
+        return AccessBlockedCooldown;
     }
 
     private bool TryGetCachedMetadata(
