@@ -110,7 +110,7 @@ To publish a release:
    branch.
 
 The publish workflow validates the release tag before building. A tag such as
-`v0.4.1` is rejected unless `build.yaml` contains `0.4.1` and
+`v0.5.0` is rejected unless `build.yaml` contains `0.5.0` and
 `Directory.Build.props` contains the matching project, assembly, and file
 versions. A failed validation leaves the GitHub release without plugin
 artifacts or a manifest update.
@@ -141,6 +141,11 @@ The release drafter chooses the next version from pull-request labels.
 the minor version, and fixes or maintenance increment the patch version.
 Pull requests without a recognized label default to a patch release. Verify
 the generated draft version before publishing it.
+
+Pull requests from branches named `release-*` or `release/*` are automatically
+labelled `skip-changelog` and excluded from the generated release notes. Apply
+the same label manually to other pull requests that only update release
+metadata. The `skip-changelog` label must exist in the GitHub repository.
 
 ## Adding a metadata source
 
