@@ -2,8 +2,12 @@ using System.Text.RegularExpressions;
 
 namespace Jellyfin.Plugin.OppaiDex.Metadata;
 
-public static partial class CatalogueIdFormatter
+public static class CatalogueIdFormatter
 {
+    private static readonly Regex CatalogueIdRegex = new(
+        @"^(?<prefix>[A-Za-z]{2,12})[\s._-]?(?<number>\d{2,6})$",
+        RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
     public static string? Format(string? catalogueId)
     {
         if (string.IsNullOrWhiteSpace(catalogueId))
@@ -12,7 +16,7 @@ public static partial class CatalogueIdFormatter
         }
 
         var value = catalogueId.Trim();
-        var match = CatalogueIdRegex().Match(value);
+        var match = CatalogueIdRegex.Match(value);
         return match.Success
             ? string.Concat(
                 match.Groups["prefix"].Value,
@@ -21,9 +25,4 @@ public static partial class CatalogueIdFormatter
                 .ToUpperInvariant()
             : value.ToUpperInvariant();
     }
-
-    [GeneratedRegex(
-        @"^(?<prefix>[A-Za-z]{2,12})[\s._-]?(?<number>\d{2,6})$",
-        RegexOptions.CultureInvariant)]
-    private static partial Regex CatalogueIdRegex();
 }
