@@ -51,6 +51,24 @@ Fallback metadata can include:
 - Full covers and gallery backdrops
 - JavDatabase external IDs
 
+### JavDB
+
+[JavDB](https://javdb.com/) is an optional final movie metadata fallback. It
+is queried only after R18.dev and JavDatabase return no exact result, and it is
+disabled by default.
+
+OppaiDex uses JavDB's public search results without accounts, cookies, or
+credentials. Exact normalized catalogue-ID matches can provide:
+
+- Japanese titles and release dates
+- Cover images
+- Catalogue tags and JavDB external IDs
+
+JavDB detail pages may require authentication, so fields such as runtime,
+studio, genres, performers, and gallery images are not imported from JavDB.
+Requests can also be rejected temporarily by the website; failures are handled
+without interrupting Jellyfin metadata scans.
+
 ## Usage
 
 ### File names
@@ -72,6 +90,8 @@ OppaiDex extracts catalogue IDs from movie file names. Examples:
   responds with HTTP 429.
 - JavDatabase fallback metadata and its request delay can be configured
   independently.
+- JavDB final fallback metadata is disabled by default and can be enabled with
+  its own base URL and request delay.
 - WAPdB performer enrichment can be enabled or disabled independently.
 - Source base URLs are configurable to accommodate future endpoint changes.
 - Movie titles can optionally be prefixed with their catalogue ID, for example
