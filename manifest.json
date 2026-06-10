@@ -9,6 +9,14 @@
     "owner": "Nana-kaka",
     "versions": [
       {
+        "changelog": "## What's New\r\n\r\n### Bug fixes\r\n\r\n* fix: improve access to javdb, do not flood (#26) @nana-kaka\r\n* fix: improve regexp handling (#25) @nana-kaka",
+        "checksum": "416718afe83151f8a67b7a64461ad2d5",
+        "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.6.1/oppaidex_0.6.1.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-06-10T21:15:06Z",
+        "version": "0.6.1"
+      },
+      {
         "changelog": "## What's New\r\n\r\n### Features and improvements\r\n\r\n* feat: add JavDB (#22) @nana-kaka\r\n\r\n### Bug fixes\r\n\r\n* fix: unify display of dvdid (#23) @nana-kaka\r\n\r\n### Documentation\r\n\r\n* feat: add JavDB (#22) @nana-kaka",
         "checksum": "e0c0505baa2f8fee030fc1f84f44990e",
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.6.0/oppaidex_0.6.0.0.zip",
