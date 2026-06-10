@@ -25,6 +25,7 @@ public class PluginConfiguration : BasePluginConfiguration
             Constants.DefaultJavDatabaseRequestDelayMilliseconds;
         WarashiBaseUrl = Constants.DefaultWarashiBaseUrl;
         WarashiEnabled = true;
+        PrefixMovieTitlesWithCatalogueId = false;
     }
 
     /// <summary>
@@ -62,6 +63,12 @@ public class PluginConfiguration : BasePluginConfiguration
     /// Gets or sets the WAPdB base URL.
     /// </summary>
     public string WarashiBaseUrl { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether movie titles are prefixed with
+    /// their catalogue ID.
+    /// </summary>
+    public bool PrefixMovieTitlesWithCatalogueId { get; set; }
 
     /// <summary>
     /// Gets or sets the legacy R18.dev API URL template.

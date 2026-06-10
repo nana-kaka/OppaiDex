@@ -9,6 +9,15 @@
         <div data-role="content">
             <div class="content-primary">
                 <form id="OppaiDexConfigForm">
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="PrefixMovieTitlesWithCatalogueId" name="PrefixMovieTitlesWithCatalogueId" type="checkbox" is="emby-checkbox" />
+                            <span>Prefix movie titles with the catalogue ID</span>
+                        </label>
+                        <div class="fieldDescription">
+                            Displays movie titles as [SONE-444] Movie Title. Refresh existing metadata after changing this option.
+                        </div>
+                    </div>
                     <div class="inputContainer">
                         <label class="inputLabel inputLabelUnfocused" for="R18ApiUrlTemplate">R18.dev API URL template</label>
                         <input id="R18ApiUrlTemplate" name="R18ApiUrlTemplate" type="text" is="emby-input" required />
@@ -70,6 +79,8 @@
                 .addEventListener('pageshow', function() {
                     Dashboard.showLoadingMsg();
                     ApiClient.getPluginConfiguration(OppaiDexConfig.pluginUniqueId).then(function (config) {
+                        document.querySelector('#PrefixMovieTitlesWithCatalogueId').checked =
+                            config.PrefixMovieTitlesWithCatalogueId ?? false;
                         document.querySelector('#R18ApiUrlTemplate').value = config.R18ApiUrlTemplate;
                         document.querySelector('#R18RequestDelayMilliseconds').value =
                             config.R18RequestDelayMilliseconds ?? 1000;
@@ -89,6 +100,8 @@
                 .addEventListener('submit', function(e) {
                     Dashboard.showLoadingMsg();
                     ApiClient.getPluginConfiguration(OppaiDexConfig.pluginUniqueId).then(function (config) {
+                        config.PrefixMovieTitlesWithCatalogueId =
+                            document.querySelector('#PrefixMovieTitlesWithCatalogueId').checked;
                         config.R18ApiUrlTemplate = document.querySelector('#R18ApiUrlTemplate').value;
                         config.R18RequestDelayMilliseconds = Number(
                             document.querySelector('#R18RequestDelayMilliseconds').value);

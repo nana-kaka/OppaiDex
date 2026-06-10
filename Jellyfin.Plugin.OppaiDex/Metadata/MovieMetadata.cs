@@ -8,6 +8,8 @@ public sealed class MovieMetadata
 {
     public required string Name { get; init; }
 
+    public string? CatalogueId { get; init; }
+
     public string? OriginalTitle { get; init; }
 
     public string? Overview { get; init; }

@@ -314,6 +314,7 @@ public sealed class R18MetadataSource : IMovieMetadataSource, IDisposable
         return new MovieMetadata
         {
             Name = GetTitle(movie),
+            CatalogueId = movie.DvdId ?? fallbackId,
             OriginalTitle = movie.TitleJapanese,
             Overview = movie.CommentEnglish,
             ReleaseDate = movie.ReleaseDate,
