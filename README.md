@@ -81,6 +81,11 @@ OppaiDex extracts catalogue IDs from movie file names. Examples:
 - `MIDA-444.mp4`
 - `mida444.mkv`
 - `MIDA_444 - title.mp4`
+- `FC2-PPV-3170983.mp4`
+- `fc2_ppv_3170983 - title.mkv`
+
+FC2-PPV titles are resolved through the optional JavDB fallback.
+Enable JavDB in the plugin configuration when importing these titles.
 
 ## Configuration
 

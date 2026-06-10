@@ -24,11 +24,6 @@ public sealed class JavDatabaseMetadataSource :
     IDisposable
 {
     private static readonly TimeSpan CacheLifetime = TimeSpan.FromHours(6);
-    private static readonly Regex MovieIdRegex = new(
-        @"(?<![A-Za-z0-9])(?<prefix>[A-Za-z]{2,12})[\s._-]?(?<number>\d{2,6})(?!\d)",
-        RegexOptions.IgnoreCase
-        | RegexOptions.CultureInvariant
-        | RegexOptions.Compiled);
     private static readonly Regex RuntimeRegex = new(
         @"\d+",
         RegexOptions.CultureInvariant | RegexOptions.Compiled);
@@ -72,7 +67,9 @@ public sealed class JavDatabaseMetadataSource :
         if (providerIds.TryGetValue(Key, out var providerId)
             && !string.IsNullOrWhiteSpace(providerId))
         {
-            return NormalizeId(providerId);
+            return CatalogueIdFormatter.IsFc2Ppv(providerId)
+                ? null
+                : NormalizeId(providerId);
         }
 
         foreach (var candidate in new[] { path, name })
@@ -83,14 +80,12 @@ public sealed class JavDatabaseMetadataSource :
             }
 
             var fileName = Path.GetFileNameWithoutExtension(candidate);
-            var match = MovieIdRegex.Match(fileName);
-            if (match.Success)
+            var catalogueId = CatalogueIdFormatter.Extract(fileName);
+            if (catalogueId is not null)
             {
-                return string.Concat(
-                    match.Groups["prefix"].Value,
-                    "-",
-                    match.Groups["number"].Value)
-                    .ToUpperInvariant();
+                return CatalogueIdFormatter.IsFc2Ppv(catalogueId)
+                    ? null
+                    : catalogueId;
             }
         }
 
@@ -453,14 +448,7 @@ public sealed class JavDatabaseMetadataSource :
 
     private static string NormalizeId(string id)
     {
-        var match = MovieIdRegex.Match(id);
-        return match.Success
-            ? string.Concat(
-                match.Groups["prefix"].Value,
-                "-",
-                match.Groups["number"].Value)
-                .ToUpperInvariant()
-            : id.Trim().ToUpperInvariant();
+        return CatalogueIdFormatter.Format(id) ?? string.Empty;
     }
 
     private static bool IdsEqual(string? left, string right)
