@@ -30,6 +30,8 @@ their Japanese originals when available.
 - Higher-resolution portrait images
 - Multiple selectable profile images
 - Birth dates and birthplaces
+- Optional biography profile facts such as measurements, cup size, height,
+  weight, and blood type
 - Stable WAPdB person IDs
 
 Performer matching is restricted to exact normalized names and aliases to
@@ -93,6 +95,8 @@ OppaiDex extracts catalogue IDs from movie file names. Examples:
 - JavDB final fallback metadata is disabled by default and can be enabled with
   its own base URL and request delay.
 - WAPdB performer enrichment can be enabled or disabled independently.
+- WAPdB profile facts in person biographies can be enabled or disabled
+  independently.
 - Source base URLs are configurable to accommodate future endpoint changes.
 - Movie titles can optionally be prefixed with their catalogue ID, for example
   `[SONE-444] Movie Title`.

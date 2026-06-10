@@ -29,6 +29,7 @@ public class PluginConfiguration : BasePluginConfiguration
             Constants.DefaultJavDbRequestDelayMilliseconds;
         WarashiBaseUrl = Constants.DefaultWarashiBaseUrl;
         WarashiEnabled = true;
+        WarashiBiographyProfileEnabled = true;
         PrefixMovieTitlesWithCatalogueId = false;
     }
 
@@ -82,6 +83,12 @@ public class PluginConfiguration : BasePluginConfiguration
     /// Gets or sets the WAPdB base URL.
     /// </summary>
     public string WarashiBaseUrl { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether WAPdB profile facts are added
+    /// to person biographies.
+    /// </summary>
+    public bool WarashiBiographyProfileEnabled { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether movie titles are prefixed with
