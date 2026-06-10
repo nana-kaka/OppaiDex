@@ -79,6 +79,15 @@
                         <label class="inputLabel inputLabelUnfocused" for="WarashiBaseUrl">WAPdB base URL</label>
                         <input id="WarashiBaseUrl" name="WarashiBaseUrl" type="text" is="emby-input" required />
                     </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="WarashiBiographyProfileEnabled" name="WarashiBiographyProfileEnabled" type="checkbox" is="emby-checkbox" />
+                            <span>Add WAPdB profile facts to person biographies</span>
+                        </label>
+                        <div class="fieldDescription">
+                            Adds available measurements, cup size, height, weight, and blood type to the person's overview.
+                        </div>
+                    </div>
                     <div>
                         <button is="emby-button" type="submit" class="raised button-submit block emby-button">
                             <span>Save</span>
@@ -115,6 +124,8 @@
                             config.JavDbRequestDelayMilliseconds ?? 2000;
                         document.querySelector('#WarashiEnabled').checked = config.WarashiEnabled;
                         document.querySelector('#WarashiBaseUrl').value = config.WarashiBaseUrl;
+                        document.querySelector('#WarashiBiographyProfileEnabled').checked =
+                            config.WarashiBiographyProfileEnabled ?? true;
                         Dashboard.hideLoadingMsg();
                     });
                 });
@@ -142,6 +153,8 @@
                             document.querySelector('#JavDbRequestDelayMilliseconds').value);
                         config.WarashiEnabled = document.querySelector('#WarashiEnabled').checked;
                         config.WarashiBaseUrl = document.querySelector('#WarashiBaseUrl').value;
+                        config.WarashiBiographyProfileEnabled =
+                            document.querySelector('#WarashiBiographyProfileEnabled').checked;
                         ApiClient.updatePluginConfiguration(OppaiDexConfig.pluginUniqueId, config).then(function (result) {
                             Dashboard.processPluginConfigurationUpdateResult(result);
                         });

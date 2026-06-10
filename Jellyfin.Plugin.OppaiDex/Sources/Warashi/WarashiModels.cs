@@ -24,6 +24,16 @@ public sealed class WarashiPerson
 
     public string? BirthPlace { get; init; }
 
+    public string? Measurements { get; init; }
+
+    public string? CupSize { get; init; }
+
+    public string? Height { get; init; }
+
+    public string? Weight { get; init; }
+
+    public string? BloodType { get; init; }
+
     public IReadOnlyList<string> Aliases { get; init; } = [];
 
     public IReadOnlyList<string> ImageUrls { get; init; } = [];
