@@ -56,6 +56,11 @@ exclude-labels:
   - invalid
 
 autolabeler:
+  - label: skip-changelog
+    branch:
+      - '/^release[-/].+/'
+    title:
+      - '/^release\b/i'
   - label: ci
     files:
       - '.github/workflows/*'
