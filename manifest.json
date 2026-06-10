@@ -9,6 +9,14 @@
     "owner": "Nana-kaka",
     "versions": [
       {
+        "changelog": "## What's New\r\n\r\n### Features and improvements\r\n\r\n* feat: add sudio short name as tag (#20) @nana-kaka\r\n* feat: add possibillity to have the catalogue id in the name for display and search (#17) @nana-kaka\r\n* CodeQL Fix: Missed opportunity to use Select (#18) @nana-kaka\r\n* extend logging (#16) @nana-kaka\r\n\r\n### Bug fixes\r\n\r\n* fix: unify tags between providers (#19) @nana-kaka",
+        "checksum": "3ca0cfa6a57093dab5a6297f70f7410f",
+        "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.5.0/oppaidex_0.5.0.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-06-10T19:27:16Z",
+        "version": "0.5.0"
+      },
+      {
         "changelog": "## What's New\r\n\r\n* Release v0.4.2 (#15) @nana-kaka\r\n* Release v0.4.1 (#14) @nana-kaka\r\n\r\n### Bug fixes\r\n\r\n* fix codeql findings (#13) @nana-kaka",
         "checksum": "20551f6d71ded5e4da6cfa1f57080ce6",
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.4.2/oppaidex_0.4.2.0.zip",
