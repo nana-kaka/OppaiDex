@@ -1,13 +1,21 @@
 [
   {
     "category": "Metadata",
-    "description": "Retrieves movie metadata, cast information, person images, and cover artwork from R18.dev, JavDatabase, and WAPdB.\n",
+    "description": "Retrieves movie metadata, cast information, person images, and cover artwork from R18.dev, JavDatabase, JavDB, and WAPdB.\n",
     "guid": "fda53ad2-6d13-42e4-a501-a6d4514e74fc",
     "imageUrl": "https://raw.githubusercontent.com/nana-kaka/OppaiDex/main/artwork/oppaidex.png",
     "name": "OppaiDex",
-    "overview": "JAV metadata provider powered by R18.dev, JavDatabase, and WAPdB",
+    "overview": "JAV metadata provider powered by R18.dev, JavDatabase, JavDB, and WAPdB",
     "owner": "Nana-kaka",
     "versions": [
+      {
+        "changelog": "## What's New\r\n\r\n### Features and improvements\r\n\r\n* feat: add JavDB (#22) @nana-kaka\r\n\r\n### Bug fixes\r\n\r\n* fix: unify display of dvdid (#23) @nana-kaka\r\n\r\n### Documentation\r\n\r\n* feat: add JavDB (#22) @nana-kaka",
+        "checksum": "e0c0505baa2f8fee030fc1f84f44990e",
+        "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.6.0/oppaidex_0.6.0.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-06-10T20:44:36Z",
+        "version": "0.6.0"
+      },
       {
         "changelog": "## What's New\r\n\r\n### Features and improvements\r\n\r\n* feat: add sudio short name as tag (#20) @nana-kaka\r\n* feat: add possibillity to have the catalogue id in the name for display and search (#17) @nana-kaka\r\n* CodeQL Fix: Missed opportunity to use Select (#18) @nana-kaka\r\n* extend logging (#16) @nana-kaka\r\n\r\n### Bug fixes\r\n\r\n* fix: unify tags between providers (#19) @nana-kaka",
         "checksum": "3ca0cfa6a57093dab5a6297f70f7410f",
