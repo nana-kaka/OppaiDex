@@ -250,20 +250,30 @@ public sealed class OppaiDexMovieProvider :
         CancellationToken cancellationToken)
     {
         var enrichedPeople = new List<MoviePersonMetadata>(people.Count);
-        foreach (var person in people)
+        var enrichmentTasks = people.Select(
+            person => EnrichPersonAsync(person, cancellationToken));
+        foreach (var enrichmentTask in enrichmentTasks)
         {
-            var enrichedPerson = person;
-            foreach (var enricher in _personEnrichers)
-            {
-                enrichedPerson = await enricher
-                    .EnrichAsync(enrichedPerson, cancellationToken)
-                    .ConfigureAwait(false);
-            }
-
-            enrichedPeople.Add(enrichedPerson);
+            enrichedPeople.Add(
+                await enrichmentTask.ConfigureAwait(false));
         }
 
         return enrichedPeople;
+    }
+
+    private async Task<MoviePersonMetadata> EnrichPersonAsync(
+        MoviePersonMetadata person,
+        CancellationToken cancellationToken)
+    {
+        var enrichedPerson = person;
+        foreach (var enricher in _personEnrichers)
+        {
+            enrichedPerson = await enricher
+                .EnrichAsync(enrichedPerson, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        return enrichedPerson;
     }
 
     private static PersonInfo CreatePersonInfo(MoviePersonMetadata person)
