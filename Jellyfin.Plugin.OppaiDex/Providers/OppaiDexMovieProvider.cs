@@ -257,7 +257,8 @@ public sealed class OppaiDexMovieProvider :
             return metadata.Name;
         }
 
-        var prefix = $"[{metadata.CatalogueId}]";
+        var catalogueId = CatalogueIdFormatter.Format(metadata.CatalogueId);
+        var prefix = $"[{catalogueId}]";
         return metadata.Name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
             ? metadata.Name
             : $"{prefix} {metadata.Name}";
