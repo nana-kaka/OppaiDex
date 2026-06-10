@@ -247,7 +247,6 @@ public sealed class JavDatabaseMetadataSource :
             return null;
         }
 
-        var contentId = GetFieldValue(fields, "Content ID");
         var genres = GetLinks(fields, "Genre(s)");
         var studios = GetLinks(fields, "Studio");
         var people = GetPeople(document, baseUri)
@@ -280,9 +279,7 @@ public sealed class JavDatabaseMetadataSource :
             RuntimeMinutes = runtime,
             Genres = genres,
             Studios = studios,
-            Tags = string.IsNullOrWhiteSpace(contentId)
-                ? []
-                : [contentId],
+            Tags = [dvdId!],
             ProviderIds = new Dictionary<string, string>(
                 StringComparer.OrdinalIgnoreCase)
             {
