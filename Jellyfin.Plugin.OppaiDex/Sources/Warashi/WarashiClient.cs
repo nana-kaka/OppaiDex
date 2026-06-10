@@ -164,6 +164,11 @@ public sealed class WarashiClient
             BirthDate = birthDate,
             BirthPlace = CleanText(
                 document.QuerySelector("[itemprop=birthPlace]")?.TextContent),
+            Measurements = GetProfileValue(document, "measurements"),
+            CupSize = GetProfileValue(document, "cup size"),
+            Height = GetProfileValue(document, "height"),
+            Weight = GetProfileValue(document, "weight"),
+            BloodType = GetProfileValue(document, "blood type"),
             Aliases = aliases,
             ImageUrls = images,
             HasPreferredImages =
@@ -338,6 +343,30 @@ public sealed class WarashiClient
         return string.Concat(
             name.Where(char.IsLetterOrDigit))
             .ToUpperInvariant();
+    }
+
+    private static string? GetProfileValue(
+        IDocument document,
+        string label)
+    {
+        var prefix = string.Concat(label, ":");
+        var text = document
+            .QuerySelectorAll("#pornostar-profil-infos > p")
+            .Select(element => CleanText(element.TextContent))
+            .FirstOrDefault(value =>
+                value?.StartsWith(
+                    prefix,
+                    StringComparison.OrdinalIgnoreCase) == true);
+        if (text is null)
+        {
+            return null;
+        }
+
+        var value = text[prefix.Length..].Trim();
+        return string.IsNullOrWhiteSpace(value)
+            || string.Equals(value, "unknown", StringComparison.OrdinalIgnoreCase)
+            ? null
+            : value;
     }
 
     private static string? CleanText(string? value)
