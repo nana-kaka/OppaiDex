@@ -335,9 +335,7 @@ public sealed class R18MetadataSource : IMovieMetadataSource, IDisposable
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToArray(),
             Studios = GetStudios(movie),
-            Tags = string.IsNullOrWhiteSpace(movie.DvdId)
-                ? []
-                : [movie.DvdId],
+            Tags = CatalogueIdTags.Create(movie.DvdId ?? fallbackId),
             ProviderIds = GetProviderIds(movie, fallbackId),
             People = GetPeople(movie),
             PrimaryImage = CreateImage(

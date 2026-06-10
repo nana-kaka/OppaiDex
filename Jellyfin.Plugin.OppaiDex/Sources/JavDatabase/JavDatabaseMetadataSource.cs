@@ -279,7 +279,7 @@ public sealed class JavDatabaseMetadataSource :
             RuntimeMinutes = runtime,
             Genres = genres,
             Studios = studios,
-            Tags = [dvdId!],
+            Tags = CatalogueIdTags.Create(dvdId),
             ProviderIds = new Dictionary<string, string>(
                 StringComparer.OrdinalIgnoreCase)
             {
