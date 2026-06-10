@@ -68,7 +68,19 @@ public sealed class OppaiDexMovieProvider :
                 .ConfigureAwait(false);
             if (metadata is null)
             {
-                fallbackAttempted |= LogFallbackAttempt(sources, index, id);
+                var nextFallbackAvailable = LogFallbackAttempt(
+                    sources,
+                    index,
+                    id);
+                if (nextFallbackAvailable)
+                {
+                    fallbackAttempted = true;
+                }
+                else
+                {
+                    LogFallbackFailure(fallbackAttempted, source, id);
+                }
+
                 continue;
             }
 
@@ -119,7 +131,15 @@ public sealed class OppaiDexMovieProvider :
                     .ConfigureAwait(false);
             }
 
-            fallbackAttempted |= LogFallbackAttempt(sources, index, id);
+            var nextFallbackAvailable = LogFallbackAttempt(sources, index, id);
+            if (nextFallbackAvailable)
+            {
+                fallbackAttempted = true;
+            }
+            else
+            {
+                LogFallbackFailure(fallbackAttempted, source, id);
+            }
         }
 
         return new MetadataResult<Movie>();
@@ -167,6 +187,22 @@ public sealed class OppaiDexMovieProvider :
             "Fallback {SourceName} found metadata for {MovieId}.",
             source.DisplayName,
             id);
+    }
+
+    private void LogFallbackFailure(
+        bool fallbackAttempted,
+        IMovieMetadataSource source,
+        string id)
+    {
+        if (!fallbackAttempted)
+        {
+            return;
+        }
+
+        _logger.LogInformation(
+            "No metadata source found metadata for {MovieId}; last fallback {SourceName} returned no result.",
+            id,
+            source.DisplayName);
     }
 
     private async Task<MetadataResult<Movie>> CreateResultAsync(
