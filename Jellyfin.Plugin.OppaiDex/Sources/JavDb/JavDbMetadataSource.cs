@@ -247,6 +247,7 @@ public sealed class JavDbMetadataSource : IMovieMetadataSource, IDisposable
                 return null;
             }
 
+            actualId = CatalogueIdFormatter.Format(actualId);
             var releaseDateText = item.QuerySelector(".meta")
                 ?.TextContent
                 .Trim();

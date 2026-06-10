@@ -241,6 +241,7 @@ public sealed class JavDatabaseMetadataSource :
             return null;
         }
 
+        dvdId = CatalogueIdFormatter.Format(dvdId);
         var title = GetFieldValue(fields, "Title");
         if (string.IsNullOrWhiteSpace(title))
         {

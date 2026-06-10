@@ -320,10 +320,12 @@ public sealed class R18MetadataSource : IMovieMetadataSource, IDisposable
 
     private static MovieMetadata MapMovie(R18Movie movie, string fallbackId)
     {
+        var catalogueId = CatalogueIdFormatter.Format(
+            movie.DvdId ?? fallbackId);
         return new MovieMetadata
         {
             Name = GetTitle(movie),
-            CatalogueId = movie.DvdId ?? fallbackId,
+            CatalogueId = catalogueId,
             OriginalTitle = movie.TitleJapanese,
             Overview = movie.CommentEnglish,
             ReleaseDate = movie.ReleaseDate,
@@ -335,7 +337,7 @@ public sealed class R18MetadataSource : IMovieMetadataSource, IDisposable
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToArray(),
             Studios = GetStudios(movie),
-            Tags = CatalogueIdTags.Create(movie.DvdId ?? fallbackId),
+            Tags = CatalogueIdTags.Create(catalogueId),
             ProviderIds = GetProviderIds(movie, fallbackId),
             People = GetPeople(movie),
             PrimaryImage = CreateImage(
@@ -380,7 +382,9 @@ public sealed class R18MetadataSource : IMovieMetadataSource, IDisposable
             StringComparer.OrdinalIgnoreCase)
         {
             [R18Provider.Key] =
-                movie.DvdId ?? movie.ContentId ?? fallbackId
+                CatalogueIdFormatter.Format(movie.DvdId)
+                ?? movie.ContentId
+                ?? CatalogueIdFormatter.Format(fallbackId)!
         };
 
         if (!string.IsNullOrWhiteSpace(movie.ContentId))

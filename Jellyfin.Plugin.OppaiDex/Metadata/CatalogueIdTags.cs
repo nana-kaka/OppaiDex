@@ -13,7 +13,7 @@ public static class CatalogueIdTags
             return [];
         }
 
-        var id = catalogueId.Trim();
+        var id = CatalogueIdFormatter.Format(catalogueId)!;
         var prefix = new string(id
             .TakeWhile(char.IsLetter)
             .Select(char.ToUpperInvariant)
