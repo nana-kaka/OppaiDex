@@ -25,6 +25,8 @@ public sealed class R18MetadataSource : IMovieMetadataSource, IDisposable
         "https://awsimgsrc.dmm.com/dig/mono/actjpgs/";
     private static readonly TimeSpan MovieCacheLifetime =
         TimeSpan.FromMinutes(30);
+    private static readonly TimeSpan NotFoundCacheLifetime =
+        TimeSpan.FromMinutes(10);
     private static readonly TimeSpan MaximumRetryDelay =
         TimeSpan.FromMinutes(5);
     private static readonly JsonSerializerOptions JsonOptions =
@@ -218,6 +220,13 @@ public sealed class R18MetadataSource : IMovieMetadataSource, IDisposable
                         "R18.dev returned HTTP {StatusCode} for {MovieId}.",
                         (int)response.StatusCode,
                         normalizedId);
+                    if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        _movieCache[normalizedId] = new CachedMovie(
+                            null,
+                            DateTimeOffset.UtcNow.Add(NotFoundCacheLifetime));
+                    }
+
                     return null;
                 }
 
@@ -495,6 +504,6 @@ public sealed class R18MetadataSource : IMovieMetadataSource, IDisposable
     }
 
     private sealed record CachedMovie(
-        R18Movie Movie,
+        R18Movie? Movie,
         DateTimeOffset ExpiresAt);
 }
