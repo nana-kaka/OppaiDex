@@ -11,7 +11,6 @@ public sealed class MetadataSourceRegistry
     public MetadataSourceRegistry(IEnumerable<IMovieMetadataSource> sources)
     {
         _sources = sources
-            .Where(source => source.IsEnabled)
             .OrderBy(source => source.Order)
             .ToArray();
 
@@ -30,16 +29,20 @@ public sealed class MetadataSourceRegistry
         IReadOnlyDictionary<string, string> providerIds)
     {
         var explicitlySelected = _sources
-            .Where(source => providerIds.ContainsKey(source.Key))
+            .Where(source => source.IsEnabled
+                && providerIds.ContainsKey(source.Key))
             .ToArray();
 
-        return explicitlySelected.Length > 0 ? explicitlySelected : _sources;
+        return explicitlySelected.Length > 0
+            ? explicitlySelected
+            : _sources.Where(source => source.IsEnabled);
     }
 
     public IEnumerable<IMovieMetadataSource> GetImageCandidates(
         IReadOnlyDictionary<string, string> providerIds)
     {
         return _sources
+            .Where(source => source.IsEnabled)
             .OrderByDescending(source => providerIds.ContainsKey(source.Key));
     }
 }

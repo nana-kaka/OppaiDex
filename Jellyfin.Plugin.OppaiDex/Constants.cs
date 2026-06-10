@@ -10,6 +10,8 @@ public static class Constants
     public const string DefaultJavDatabaseBaseUrl =
         "https://www.javdatabase.com";
     public const int DefaultJavDatabaseRequestDelayMilliseconds = 1500;
+    public const string DefaultJavDbBaseUrl = "https://javdb.com";
+    public const int DefaultJavDbRequestDelayMilliseconds = 2000;
     public const string DefaultWarashiBaseUrl =
         "https://warashi-asian-pornstars.fr";
 }

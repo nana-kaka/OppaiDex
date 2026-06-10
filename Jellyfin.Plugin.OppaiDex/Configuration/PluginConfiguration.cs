@@ -23,6 +23,10 @@ public class PluginConfiguration : BasePluginConfiguration
         JavDatabaseEnabled = true;
         JavDatabaseRequestDelayMilliseconds =
             Constants.DefaultJavDatabaseRequestDelayMilliseconds;
+        JavDbBaseUrl = Constants.DefaultJavDbBaseUrl;
+        JavDbEnabled = false;
+        JavDbRequestDelayMilliseconds =
+            Constants.DefaultJavDbRequestDelayMilliseconds;
         WarashiBaseUrl = Constants.DefaultWarashiBaseUrl;
         WarashiEnabled = true;
         PrefixMovieTitlesWithCatalogueId = false;
@@ -53,6 +57,21 @@ public class PluginConfiguration : BasePluginConfiguration
     /// Gets or sets the minimum delay between JavDatabase requests.
     /// </summary>
     public int JavDatabaseRequestDelayMilliseconds { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether JavDB fallback metadata is enabled.
+    /// </summary>
+    public bool JavDbEnabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets the JavDB base URL.
+    /// </summary>
+    public string JavDbBaseUrl { get; set; }
+
+    /// <summary>
+    /// Gets or sets the minimum delay between JavDB requests.
+    /// </summary>
+    public int JavDbRequestDelayMilliseconds { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether WAPdB person metadata is enabled.
