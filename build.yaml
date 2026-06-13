@@ -2,7 +2,7 @@
 name: "OppaiDex"
 guid: "fda53ad2-6d13-42e4-a501-a6d4514e74fc"
 imageUrl: "https://raw.githubusercontent.com/nana-kaka/OppaiDex/main/artwork/oppaidex.png"
-version: "0.6.1"
+version: "0.7.0"
 targetAbi: "10.11.0.0"
 framework: "net9.0"
 overview: "JAV metadata provider powered by R18.dev, JavDatabase, JavDB, and WAPdB"
@@ -15,7 +15,7 @@ artifacts:
 - "Jellyfin.Plugin.OppaiDex.dll"
 - "AngleSharp.dll"
 changelog: >
-  Improved JavDB access with browser-compatible request headers and a
-  source-wide cooldown for HTTP 403 and 429 responses to prevent repeated
-  blocked requests during library scans. Replaced generated catalogue-ID
-  regular-expression code to avoid false-positive CodeQL alerts.
+  Added optional WAPdB profile facts to performer biographies. Available
+  measurements, cup size, height, weight, and blood type are displayed as
+  separate profile entries and can be enabled or disabled independently in
+  the plugin configuration.
