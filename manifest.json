@@ -9,12 +9,20 @@
     "owner": "Nana-kaka",
     "versions": [
       {
+        "changelog": "## What's New\r\n\r\n### Features and improvements\r\n\r\n* feat: improve profile (#30) @nana-kaka",
+        "checksum": "319a856fcb67d44f66744fbdd7fbfdcc",
+        "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.7.0/oppaidex_0.7.0.0.zip",
+        "targetAbi": "10.11.0.0",
+        "timestamp": "2026-06-13T23:41:03Z",
+        "version": "0.7.0"
+      },
+      {
         "changelog": "## What's New\r\n\r\n### Bug fixes\r\n\r\n* fix: improve access to javdb, do not flood (#26) @nana-kaka\r\n* fix: improve regexp handling (#25) @nana-kaka",
         "checksum": "416718afe83151f8a67b7a64461ad2d5",
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.6.1/oppaidex_0.6.1.0.zip",
         "targetAbi": "10.11.0.0",
         "timestamp": "2026-06-10T21:15:06Z",
-        "version": "0.6.1.0"
+        "version": "0.6.1"
       },
       {
         "changelog": "## What's New\r\n\r\n### Features and improvements\r\n\r\n* feat: add JavDB (#22) @nana-kaka\r\n\r\n### Bug fixes\r\n\r\n* fix: unify display of dvdid (#23) @nana-kaka\r\n\r\n### Documentation\r\n\r\n* feat: add JavDB (#22) @nana-kaka",
@@ -22,7 +30,7 @@
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.6.0/oppaidex_0.6.0.0.zip",
         "targetAbi": "10.11.0.0",
         "timestamp": "2026-06-10T20:44:36Z",
-        "version": "0.6.0.0"
+        "version": "0.6.0"
       },
       {
         "changelog": "## What's New\r\n\r\n### Features and improvements\r\n\r\n* feat: add sudio short name as tag (#20) @nana-kaka\r\n* feat: add possibillity to have the catalogue id in the name for display and search (#17) @nana-kaka\r\n* CodeQL Fix: Missed opportunity to use Select (#18) @nana-kaka\r\n* extend logging (#16) @nana-kaka\r\n\r\n### Bug fixes\r\n\r\n* fix: unify tags between providers (#19) @nana-kaka",
@@ -30,7 +38,7 @@
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.5.0/oppaidex_0.5.0.0.zip",
         "targetAbi": "10.11.0.0",
         "timestamp": "2026-06-10T19:27:16Z",
-        "version": "0.5.0.0"
+        "version": "0.5.0"
       },
       {
         "changelog": "## What's New\r\n\r\n* Release v0.4.2 (#15) @nana-kaka\r\n* Release v0.4.1 (#14) @nana-kaka\r\n\r\n### Bug fixes\r\n\r\n* fix codeql findings (#13) @nana-kaka",
@@ -38,7 +46,7 @@
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.4.2/oppaidex_0.4.2.0.zip",
         "targetAbi": "10.11.0.0",
         "timestamp": "2026-06-09T16:58:48Z",
-        "version": "0.4.2.0"
+        "version": "0.4.2"
       },
       {
         "changelog": "## What's New\r\n\r\n* Release v0.4.0 (#12) @nana-kaka\r\n\r\n### Features and improvements\r\n\r\n* feat: improve movie handler to show r18 and javdatabase (#11) @nana-kaka\r\n\r\n### Bug fixes\r\n\r\n* fix broken version, release v0.3.2 (#9) @nana-kaka\r\n\r\n### Maintenance\r\n\r\n* ci: reject tag if not match to build meta (#10) @nana-kaka",
@@ -46,7 +54,7 @@
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.4.0/oppaidex_0.4.0.0.zip",
         "targetAbi": "10.11.0.0",
         "timestamp": "2026-06-09T16:28:21Z",
-        "version": "0.4.0.0"
+        "version": "0.4.0"
       },
       {
         "changelog": "## What's New\r\n\r\n### Bug fixes\r\n\r\n* Fix WAPdB portrait selection (#8) @nana-kaka",
@@ -54,7 +62,7 @@
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.3.1/oppaidex_0.2.0.0.zip",
         "targetAbi": "10.11.0.0",
         "timestamp": "2026-06-09T15:56:34Z",
-        "version": "0.2.0.0"
+        "version": "0.2.0"
       },
       {
         "changelog": "## What's New\r\n\r\n* add logo (#7) @nana-kaka\r\n\r\n### Features and improvements\r\n\r\n* extent logging if 404 (#6) @nana-kaka",
@@ -62,7 +70,7 @@
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.3.0/oppaidex_0.2.0.0.zip",
         "targetAbi": "10.11.0.0",
         "timestamp": "2026-06-09T13:59:32Z",
-        "version": "0.2.0.0"
+        "version": "0.2.0"
       },
       {
         "changelog": "## What's New\r\n\r\n### Features and improvements\r\n\r\n* improve ci labeling (#5) @nana-kaka\r\n* add a fallback to JavDatabase when r18.dev fails with 404 (#4) @nana-kaka",
@@ -70,7 +78,7 @@
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.2.0/oppaidex_0.2.0.0.zip",
         "targetAbi": "10.11.0.0",
         "timestamp": "2026-06-09T13:10:29Z",
-        "version": "0.2.0.0"
+        "version": "0.2.0"
       },
       {
         "changelog": "## What's New\r\n\r\n* fix broken v0.1.1 by prepare v0.1.2 (#3) @nana-kaka",
@@ -78,7 +86,7 @@
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.1.2/oppaidex_0.1.2.0.zip",
         "targetAbi": "10.11.0.0",
         "timestamp": "2026-06-09T09:02:53Z",
-        "version": "0.1.2.0"
+        "version": "0.1.2"
       },
       {
         "changelog": "## What's New\r\n\r\n* handle r18.dev http/429 messages (#2) @nana-kaka",
@@ -86,7 +94,7 @@
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.1.1/oppaidex_0.1.0.0.zip",
         "targetAbi": "10.11.0.0",
         "timestamp": "2026-06-09T00:33:26Z",
-        "version": "0.1.0.0"
+        "version": "0.1.0"
       },
       {
         "changelog": "## What's New\r\n\r\n* Initial first release\r\n\r\n",
@@ -94,7 +102,7 @@
         "sourceUrl": "https://github.com/nana-kaka/OppaiDex/releases/download/v0.1.0/oppaidex_0.1.0.0.zip",
         "targetAbi": "10.11.0.0",
         "timestamp": "2026-06-08T22:21:03Z",
-        "version": "0.1.0.0"
+        "version": "0.1.0"
       }
     ]
   }
