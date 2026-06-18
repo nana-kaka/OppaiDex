@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
@@ -25,11 +24,6 @@ public sealed class JavDbMetadataSource : IMovieMetadataSource, IDisposable
     private static readonly TimeSpan CacheLifetime = TimeSpan.FromHours(6);
     private static readonly TimeSpan NotFoundCacheLifetime =
         TimeSpan.FromMinutes(30);
-    private static readonly Regex MovieIdRegex = new(
-        @"(?<![A-Za-z0-9])(?<prefix>[A-Za-z]{2,12})[\s._-]?(?<number>\d{2,6})(?!\d)",
-        RegexOptions.IgnoreCase
-        | RegexOptions.CultureInvariant
-        | RegexOptions.Compiled);
     private static readonly string[] ReleaseDateFormats =
     [
         "yyyy-MM-dd",
@@ -86,10 +80,10 @@ public sealed class JavDbMetadataSource : IMovieMetadataSource, IDisposable
             }
 
             var fileName = Path.GetFileNameWithoutExtension(candidate);
-            var match = MovieIdRegex.Match(fileName);
-            if (match.Success)
+            var catalogueId = CatalogueIdFormatter.Extract(fileName);
+            if (catalogueId is not null)
             {
-                return FormatId(match);
+                return catalogueId;
             }
         }
 
@@ -410,19 +404,7 @@ public sealed class JavDbMetadataSource : IMovieMetadataSource, IDisposable
 
     private static string NormalizeId(string id)
     {
-        var match = MovieIdRegex.Match(id);
-        return match.Success
-            ? FormatId(match)
-            : id.Trim().ToUpperInvariant();
-    }
-
-    private static string FormatId(Match match)
-    {
-        return string.Concat(
-            match.Groups["prefix"].Value,
-            "-",
-            match.Groups["number"].Value)
-            .ToUpperInvariant();
+        return CatalogueIdFormatter.Format(id) ?? string.Empty;
     }
 
     private static bool IdsEqual(string? left, string right)

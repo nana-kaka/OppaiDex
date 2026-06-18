@@ -7,7 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Data.Enums;
@@ -31,11 +30,6 @@ public sealed class R18MetadataSource : IMovieMetadataSource, IDisposable
         TimeSpan.FromMinutes(5);
     private static readonly JsonSerializerOptions JsonOptions =
         new(JsonSerializerDefaults.Web);
-    private static readonly Regex MovieIdRegex = new(
-        @"(?<![A-Za-z0-9])(?<prefix>[A-Za-z]{2,12})[\s._-]?(?<number>\d{2,6})(?!\d)",
-        RegexOptions.IgnoreCase
-        | RegexOptions.CultureInvariant
-        | RegexOptions.Compiled);
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<R18MetadataSource> _logger;
     private readonly ConcurrentDictionary<string, CachedMovie> _movieCache =
@@ -75,7 +69,9 @@ public sealed class R18MetadataSource : IMovieMetadataSource, IDisposable
         if (providerIds.TryGetValue(Key, out var providerId)
             && !string.IsNullOrWhiteSpace(providerId))
         {
-            return providerId;
+            return CatalogueIdFormatter.IsFc2Ppv(providerId)
+                ? null
+                : providerId;
         }
 
         foreach (var candidate in new[] { path, name })
@@ -86,13 +82,12 @@ public sealed class R18MetadataSource : IMovieMetadataSource, IDisposable
             }
 
             var fileName = Path.GetFileNameWithoutExtension(candidate);
-            var match = MovieIdRegex.Match(fileName);
-            if (match.Success)
+            var catalogueId = CatalogueIdFormatter.Extract(fileName);
+            if (catalogueId is not null)
             {
-                return string.Concat(
-                    match.Groups["prefix"].Value,
-                    "-",
-                    match.Groups["number"].Value);
+                return CatalogueIdFormatter.IsFc2Ppv(catalogueId)
+                    ? null
+                    : catalogueId;
             }
         }
 

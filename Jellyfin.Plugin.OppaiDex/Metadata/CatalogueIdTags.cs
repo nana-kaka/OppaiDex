@@ -14,10 +14,13 @@ public static class CatalogueIdTags
         }
 
         var id = CatalogueIdFormatter.Format(catalogueId)!;
-        var prefix = new string(id
-            .TakeWhile(char.IsLetter)
-            .Select(char.ToUpperInvariant)
-            .ToArray());
+        var separatorIndex = id.LastIndexOf('-');
+        var prefix = separatorIndex > 0
+            ? id[..separatorIndex]
+            : new string(id
+                .TakeWhile(char.IsLetter)
+                .Select(char.ToUpperInvariant)
+                .ToArray());
 
         return string.IsNullOrWhiteSpace(prefix)
             ? [id]
